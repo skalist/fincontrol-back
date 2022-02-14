@@ -1,6 +1,7 @@
 package com.fincontrol.controller
 
-import com.fincontrol.model.ExpenseType
+import com.fincontrol.dto.ExpenseTypeListDto
+import com.fincontrol.dto.ExpenseTypeUpsertDto
 import com.fincontrol.service.ExpenseTypeService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,23 +19,17 @@ class ExpenseTypeController(
     private val expenseTypeService: ExpenseTypeService
 ) {
     @GetMapping
-    fun findAll() = expenseTypeService.findAll()
+    fun findAll(): List<ExpenseTypeListDto> = expenseTypeService.findAll()
 
     @GetMapping("{id}")
-    fun findOne(@PathVariable id: UUID) = expenseTypeService.findOne(id)
+    fun findOne(@PathVariable id: UUID): ExpenseTypeUpsertDto = expenseTypeService.findOne(id)
 
     @PostMapping
-    fun create(@RequestBody expenseType: ExpenseType): ExpenseType {
-        return expenseTypeService.save(expenseType)
-    }
+    fun create(@RequestBody dto: ExpenseTypeUpsertDto): ExpenseTypeUpsertDto = expenseTypeService.create(dto)
 
     @PutMapping
-    fun update(@RequestBody expenseType: ExpenseType): ExpenseType {
-        return expenseTypeService.save(expenseType)
-    }
+    fun update(@RequestBody dto: ExpenseTypeUpsertDto): ExpenseTypeUpsertDto = expenseTypeService.update(dto)
 
     @DeleteMapping("{id}")
-    fun delete(@PathVariable id: UUID) {
-        expenseTypeService.delete(id)
-    }
+    fun delete(@PathVariable id: UUID) = expenseTypeService.delete(id)
 }

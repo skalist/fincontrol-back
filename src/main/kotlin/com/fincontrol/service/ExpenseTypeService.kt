@@ -1,5 +1,8 @@
 package com.fincontrol.service
 
+import com.fincontrol.dto.ExpenseTypeListDto
+import com.fincontrol.dto.ExpenseTypeUpsertDto
+import com.fincontrol.exception.EntityNotFoundException
 import com.fincontrol.model.ExpenseType
 import com.fincontrol.repository.ExpenseTypeRepository
 import org.springframework.stereotype.Service
@@ -9,20 +12,26 @@ import java.util.UUID
 class ExpenseTypeService(
     private val expenseTypeRepository: ExpenseTypeRepository
 ) {
-    fun findAll(): List<ExpenseType> = expenseTypeRepository.findAll()
+    fun findAll() = expenseTypeRepository.findAll().map { ExpenseTypeListDto(it.id, it.name) }
 
-    fun findOne(id: UUID): ExpenseType = expenseTypeRepository.findById(id)
-        .orElseThrow { throw Exception("Entity not found exception") }
+    fun findOne(id: UUID) = expenseTypeRepository.findById(id)
+        .orElseThrow { throw EntityNotFoundException(ExpenseType::class.java.simpleName, id) }
+        .let { ExpenseTypeUpsertDto(it.id, it.name) }
 
-    fun save(dto: ExpenseType): ExpenseType {
-        return if (dto.id != null) {
-            expenseTypeRepository.findById(dto.id!!)
-                .orElseThrow { throw Exception("Entity not found exception") }
-                .apply { name = dto.name }
-                .let { expenseTypeRepository.save(it) }
-        } else {
-            expenseTypeRepository.save(dto)
+    fun create(dto: ExpenseTypeUpsertDto): ExpenseTypeUpsertDto {
+        val expenseType = ExpenseType(name = dto.name)
+        return expenseTypeRepository.save(expenseType)
+            .let { ExpenseTypeUpsertDto(it.id, it.name) }
+    }
+
+    fun update(dto: ExpenseTypeUpsertDto): ExpenseTypeUpsertDto {
+        val expenseType = expenseTypeRepository.findById(dto.id!!).orElseThrow {
+            throw EntityNotFoundException(ExpenseType::class.java.simpleName, dto.id)
         }
+        val copyExpenseType = expenseType.copy(name = dto.name)
+
+        return expenseTypeRepository.save(copyExpenseType)
+            .let { ExpenseTypeUpsertDto(it.id, it.name) }
     }
 
     fun delete(id: UUID) {
