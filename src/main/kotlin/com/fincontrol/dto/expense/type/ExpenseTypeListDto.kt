@@ -1,4 +1,4 @@
-package com.fincontrol.dto
+package com.fincontrol.dto.expense.type
 
 import java.util.UUID
 
