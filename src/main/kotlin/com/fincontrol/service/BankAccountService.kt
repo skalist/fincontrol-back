@@ -12,9 +12,14 @@ import java.util.*
 @Service
 @Transactional(readOnly = true)
 class BankAccountService(
-    private val bankAccountRepository: BankAccountRepository
+    private val bankAccountRepository: BankAccountRepository,
+    private val authenticationFacade: AuthenticationFacade,
 ) {
-    fun findAll() = bankAccountRepository.findAll().map { BankAccountListDto(it.id, it.name) }
+    fun findAll(): List<BankAccountListDto> {
+        val userId = authenticationFacade.getUserId()
+        return bankAccountRepository.findAllByUserId(userId)
+            .map { BankAccountListDto(it.id, it.name) }
+    }
 
     fun findOne(id: UUID) = bankAccountRepository.findById(id)
         .orElseThrow { throw EntityNotFoundException(BankAccount::class.java.simpleName, id) }
@@ -22,7 +27,8 @@ class BankAccountService(
 
     @Transactional
     fun create(dto: BankAccountUpsertDto): BankAccountUpsertDto {
-        val bankAccount = BankAccount(name = dto.name)
+        val userId = authenticationFacade.getUserId()
+        val bankAccount = BankAccount(name = dto.name, userId = userId)
         return bankAccountRepository.save(bankAccount)
             .let { BankAccountUpsertDto(it.id, it.name) }
     }

@@ -12,5 +12,7 @@ data class ExpenseType(
     @GeneratedValue
     @Type(type = "uuid-char")
     val id: UUID = UUID.randomUUID(),
+    @Type(type = "uuid-char")
+    val userId: UUID,
     val name: String,
 )

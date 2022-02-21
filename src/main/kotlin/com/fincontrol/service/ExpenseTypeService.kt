@@ -1,5 +1,6 @@
 package com.fincontrol.service
 
+import com.fincontrol.config.auth.UserPrincipal
 import com.fincontrol.dto.expense.type.ExpenseTypeListDto
 import com.fincontrol.dto.expense.type.ExpenseTypeUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
@@ -12,9 +13,14 @@ import java.util.UUID
 @Service
 @Transactional(readOnly = true)
 class ExpenseTypeService(
-    private val expenseTypeRepository: ExpenseTypeRepository
+    private val expenseTypeRepository: ExpenseTypeRepository,
+    private val authenticationFacade: AuthenticationFacade,
 ) {
-    fun findAll() = expenseTypeRepository.findAll().map { ExpenseTypeListDto(it.id, it.name) }
+    fun findAll(): List<ExpenseTypeListDto> {
+        val userId = authenticationFacade.getUserId()
+        return expenseTypeRepository.findAllByUserId(userId)
+            .map { ExpenseTypeListDto(it.id, it.name) }
+    }
 
     fun findOne(id: UUID) = expenseTypeRepository.findById(id)
         .orElseThrow { throw EntityNotFoundException(ExpenseType::class.java.simpleName, id) }
@@ -22,7 +28,8 @@ class ExpenseTypeService(
 
     @Transactional
     fun create(dto: ExpenseTypeUpsertDto): ExpenseTypeUpsertDto {
-        val expenseType = ExpenseType(name = dto.name)
+        val userId = authenticationFacade.getUserId()
+        val expenseType = ExpenseType(name = dto.name, userId = userId)
         return expenseTypeRepository.save(expenseType)
             .let { ExpenseTypeUpsertDto(it.id, it.name) }
     }
