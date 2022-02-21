@@ -1,5 +1,6 @@
 package com.fincontrol.controller
 
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.expense.type.ExpenseTypeListDto
 import com.fincontrol.dto.expense.type.ExpenseTypeUpsertDto
 import com.fincontrol.service.ExpenseTypeService
@@ -32,4 +33,7 @@ class ExpenseTypeController(
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable id: UUID) = expenseTypeService.delete(id)
+
+    @GetMapping("selects")
+    fun findSelects(): List<AutocompleteOption<UUID>> = expenseTypeService.findSelects()
 }

@@ -1,5 +1,6 @@
 package com.fincontrol.service
 
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.bank.account.BankAccountListDto
 import com.fincontrol.dto.bank.account.BankAccountUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
@@ -47,5 +48,11 @@ class BankAccountService(
     @Transactional
     fun delete(id: UUID) {
         bankAccountRepository.deleteById(id)
+    }
+
+    fun findSelects(): List<AutocompleteOption<UUID>> {
+        val userId = authenticationFacade.getUserId()
+        return bankAccountRepository.findAllByUserId(userId)
+            .map { AutocompleteOption(it.id, it.name) }
     }
 }

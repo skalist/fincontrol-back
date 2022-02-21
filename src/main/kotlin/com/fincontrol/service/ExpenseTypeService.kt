@@ -1,6 +1,7 @@
 package com.fincontrol.service
 
 import com.fincontrol.config.auth.UserPrincipal
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.expense.type.ExpenseTypeListDto
 import com.fincontrol.dto.expense.type.ExpenseTypeUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
@@ -48,5 +49,11 @@ class ExpenseTypeService(
     @Transactional
     fun delete(id: UUID) {
         expenseTypeRepository.deleteById(id)
+    }
+
+    fun findSelects(): List<AutocompleteOption<UUID>> {
+        val userId = authenticationFacade.getUserId()
+        return expenseTypeRepository.findAllByUserId(userId)
+            .map { AutocompleteOption(it.id, it.name) }
     }
 }
