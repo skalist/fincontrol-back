@@ -4,14 +4,13 @@ import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.BankOperationListDto
 import com.fincontrol.dto.BankOperationUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
-import com.fincontrol.model.BankAccount
 import com.fincontrol.model.BankOperation
 import com.fincontrol.repository.BankAccountRepository
 import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.repository.ExpenseTypeRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 @Service
 @Transactional(readOnly = true)
@@ -74,7 +73,7 @@ class BankOperationService(
         val expenseType = expenseTypeRepository.findById(dto.expenseType.value).orElse(null)
         val bankAccount = bankAccountRepository.findById(dto.bankAccount.value).orElse(null)
 
-        val bankOperation = bankOperationRepository.findById(dto.id)
+        val bankOperation = bankOperationRepository.findById(dto.id!!)
             .orElseThrow { throw EntityNotFoundException(BankOperation::class.java.simpleName, dto.id) }
 
         val copyBankOperation = bankOperation.copy(

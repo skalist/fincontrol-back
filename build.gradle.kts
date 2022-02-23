@@ -25,6 +25,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.flywaydb:flyway-core")
 	implementation("io.jsonwebtoken:jjwt-api:0.10.7")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.10.7")
 	runtimeOnly("io.jsonwebtoken:jjwt-orgjson:0.10.7")
 	runtimeOnly("org.postgresql:postgresql")
