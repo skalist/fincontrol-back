@@ -16,4 +16,7 @@ data class User(
     val id: UUID = UUID.randomUUID(),
     val username: String,
     val password: String,
+    val firstName: String?,
+    val lastName: String?,
+    val active: Boolean,
 )
