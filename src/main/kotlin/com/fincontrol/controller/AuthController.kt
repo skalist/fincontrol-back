@@ -36,7 +36,13 @@ class AuthController(
 
     @PostMapping("signup")
     fun signup(@RequestBody dto: SignUpDto): ResponseEntity<String> {
-        val user = User(username = dto.username, password = passwordEncoder.encode(dto.password))
+        val user = User(
+            username = dto.username,
+            password = passwordEncoder.encode(dto.password),
+            active = false,
+            firstName = dto.firstName,
+            lastName = dto.lastName
+        )
 
         userDetailsService.save(user)
         return ResponseEntity.ok("User registered successfully")
