@@ -8,9 +8,9 @@ spring:
     database: POSTGRESQL
     show-sql: true
   datasource:
-    url: jdbc:postgresql://ec2-54-164-241-193.compute-1.amazonaws.com:5432/dfb5ruohbv7p30
-    username: znohbpznoiwhbs
-    password: 0d08bd9d55df5b98295a9e07c9b5de118347995f0c047015df9a08d60b2204ac
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driverClassName: org.postgresql.Driver
 
 fincontrol:
