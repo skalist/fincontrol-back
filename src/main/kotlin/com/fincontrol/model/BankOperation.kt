@@ -15,8 +15,8 @@ data class BankOperation(
     @Type(type = "uuid-char")
     val userId: UUID,
     @ManyToOne
-    @JoinColumn(name = "bank_operation_category_id")
-    val expenseType: ExpenseType,
+    @JoinColumn(name = "operation_category_id")
+    val operationCategory: OperationCategory,
     @ManyToOne
     @JoinColumn(name = "bank_account_id")
     val bankAccount: BankAccount,

@@ -8,8 +8,8 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "bank_operation_category")
-data class ExpenseType(
+@Table(name = "operation_category")
+data class OperationCategory(
     @Id
     @GeneratedValue
     @Type(type = "uuid-char")

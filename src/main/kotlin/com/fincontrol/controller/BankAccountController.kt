@@ -3,10 +3,7 @@ package com.fincontrol.controller
 import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.bank.account.BankAccountListDto
 import com.fincontrol.dto.bank.account.BankAccountUpsertDto
-import com.fincontrol.dto.expense.type.ExpenseTypeListDto
-import com.fincontrol.dto.expense.type.ExpenseTypeUpsertDto
 import com.fincontrol.service.BankAccountService
-import com.fincontrol.service.ExpenseTypeService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

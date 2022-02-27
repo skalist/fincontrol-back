@@ -1,0 +1,2 @@
+alter table bank_operation_category rename to operation_category;
+alter table bank_operation rename column bank_operation_category_id to operation_category_id;
