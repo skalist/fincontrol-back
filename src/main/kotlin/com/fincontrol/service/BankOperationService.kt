@@ -7,7 +7,7 @@ import com.fincontrol.exception.EntityNotFoundException
 import com.fincontrol.model.BankOperation
 import com.fincontrol.repository.BankAccountRepository
 import com.fincontrol.repository.BankOperationRepository
-import com.fincontrol.repository.ExpenseTypeRepository
+import com.fincontrol.repository.OperationCategoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -17,7 +17,7 @@ import java.util.*
 class BankOperationService(
     private val bankOperationRepository: BankOperationRepository,
     private val authenticationFacade: AuthenticationFacade,
-    private val expenseTypeRepository: ExpenseTypeRepository,
+    private val operationCategoryRepository: OperationCategoryRepository,
     private val bankAccountRepository: BankAccountRepository,
 ) {
     fun findAll(): List<BankOperationListDto> {
@@ -26,7 +26,7 @@ class BankOperationService(
             .map {
                 BankOperationListDto(
                     id = it.id,
-                    expenseTypeName = it.expenseType.name,
+                    operationCategoryName = it.operationCategory.name,
                     bankAccountName = it.bankAccount.name,
                     type = it.type,
                     dateCreated = it.dateCreated,
@@ -41,7 +41,7 @@ class BankOperationService(
         return bankOperation.let {
             BankOperationUpsertDto(
                 id = it.id,
-                expenseType = AutocompleteOption(it.expenseType.id, it.expenseType.name),
+                operationCategory = AutocompleteOption(it.operationCategory.id, it.operationCategory.name),
                 bankAccount = AutocompleteOption(it.bankAccount.id, it.bankAccount.name),
                 type = it.type,
                 dateCreated = it.dateCreated,
@@ -53,12 +53,12 @@ class BankOperationService(
     @Transactional
     fun create(dto: BankOperationUpsertDto): UUID {
         val userId = authenticationFacade.getUserId()
-        val expenseType = expenseTypeRepository.findById(dto.expenseType.value).orElse(null)
+        val operationCategory = operationCategoryRepository.findById(dto.operationCategory.value).orElse(null)
         val bankAccount = bankAccountRepository.findById(dto.bankAccount.value).orElse(null)
 
         val bankOperation = BankOperation(
             userId = userId,
-            expenseType = expenseType,
+            operationCategory = operationCategory,
             bankAccount = bankAccount,
             type = dto.type,
             dateCreated = dto.dateCreated,
@@ -70,14 +70,14 @@ class BankOperationService(
 
     @Transactional
     fun update(dto: BankOperationUpsertDto): UUID {
-        val expenseType = expenseTypeRepository.findById(dto.expenseType.value).orElse(null)
+        val operationCategory = operationCategoryRepository.findById(dto.operationCategory.value).orElse(null)
         val bankAccount = bankAccountRepository.findById(dto.bankAccount.value).orElse(null)
 
         val bankOperation = bankOperationRepository.findById(dto.id!!)
             .orElseThrow { throw EntityNotFoundException(BankOperation::class.java.simpleName, dto.id) }
 
         val copyBankOperation = bankOperation.copy(
-            expenseType = expenseType,
+            operationCategory = operationCategory,
             bankAccount = bankAccount,
             type = dto.type,
             dateCreated = dto.dateCreated,

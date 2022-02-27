@@ -8,7 +8,7 @@ import java.util.*
 
 data class BankOperationListDto(
     val id: UUID,
-    val expenseTypeName: String,
+    val operationCategoryName: String,
     val bankAccountName: String,
     val type: OperationType,
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -18,7 +18,7 @@ data class BankOperationListDto(
 
 data class BankOperationUpsertDto(
     val id: UUID?,
-    val expenseType: AutocompleteOption<UUID>,
+    val operationCategory: AutocompleteOption<UUID>,
     val bankAccount: AutocompleteOption<UUID>,
     val type: OperationType,
     @JsonFormat(pattern = "yyyy-MM-dd")
