@@ -5,10 +5,8 @@ import java.util.*
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
-import javax.persistence.Table
 
 @Entity
-@Table(name = "operation_category")
 data class OperationCategory(
     @Id
     @GeneratedValue
