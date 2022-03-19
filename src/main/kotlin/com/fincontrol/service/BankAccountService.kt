@@ -1,8 +1,8 @@
 package com.fincontrol.service
 
 import com.fincontrol.dto.AutocompleteOption
-import com.fincontrol.dto.bank.account.BankAccountListDto
-import com.fincontrol.dto.bank.account.BankAccountUpsertDto
+import com.fincontrol.dto.BankAccountListDto
+import com.fincontrol.dto.BankAccountUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
 import com.fincontrol.model.BankAccount
 import com.fincontrol.repository.BankAccountRepository

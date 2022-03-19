@@ -1,8 +1,8 @@
 package com.fincontrol.controller
 
 import com.fincontrol.dto.AutocompleteOption
-import com.fincontrol.dto.bank.account.BankAccountListDto
-import com.fincontrol.dto.bank.account.BankAccountUpsertDto
+import com.fincontrol.dto.BankAccountListDto
+import com.fincontrol.dto.BankAccountUpsertDto
 import com.fincontrol.service.BankAccountService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
