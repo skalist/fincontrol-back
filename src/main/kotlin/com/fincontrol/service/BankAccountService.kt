@@ -22,7 +22,7 @@ class BankAccountService(
             .map { BankAccountListDto(it.id, it.name) }
     }
 
-    fun findOne(id: UUID) = bankAccountRepository.findById(id)
+    fun findById(id: UUID) = bankAccountRepository.findById(id)
         .orElseThrow { throw EntityNotFoundException(BankAccount::class.java.simpleName, id) }
         .let { BankAccountUpsertDto(it.id, it.name) }
 

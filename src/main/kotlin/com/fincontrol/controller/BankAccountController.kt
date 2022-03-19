@@ -23,7 +23,7 @@ class BankAccountController(
     fun findAll(): List<BankAccountListDto> = bankAccountService.findAll()
 
     @GetMapping("{id}")
-    fun findOne(@PathVariable id: UUID): BankAccountUpsertDto = bankAccountService.findOne(id)
+    fun findById(@PathVariable id: UUID): BankAccountUpsertDto = bankAccountService.findById(id)
 
     @PostMapping
     fun create(@RequestBody dto: BankAccountUpsertDto): BankAccountUpsertDto = bankAccountService.create(dto)

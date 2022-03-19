@@ -22,7 +22,7 @@ class OperationCategoryService(
             .map { OperationCategoryListDto(it.id, it.name) }
     }
 
-    fun findOne(id: UUID) = operationCategoryRepository.findById(id)
+    fun findById(id: UUID) = operationCategoryRepository.findById(id)
         .orElseThrow { throw EntityNotFoundException(OperationCategory::class.java.simpleName, id) }
         .let { OperationCategoryUpsertDto(it.id, it.name) }
 

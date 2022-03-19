@@ -16,7 +16,7 @@ class OperationCategoryController(
     fun findAll(): List<OperationCategoryListDto> = operationCategoryService.findAll()
 
     @GetMapping("{id}")
-    fun findOne(@PathVariable id: UUID): OperationCategoryUpsertDto = operationCategoryService.findOne(id)
+    fun findById(@PathVariable id: UUID): OperationCategoryUpsertDto = operationCategoryService.findById(id)
 
     @PostMapping
     fun create(@RequestBody dto: OperationCategoryUpsertDto): OperationCategoryUpsertDto = operationCategoryService.create(dto)
