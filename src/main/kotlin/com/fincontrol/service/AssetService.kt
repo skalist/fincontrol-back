@@ -25,8 +25,8 @@ class AssetService(
             AssetListDto(
                 id = it.id,
                 name = it.name,
-                type = it.type,
-                currency = it.currency,
+                type = it.type.value,
+                currency = it.currency.value,
                 code = it.code,
                 description = it.description,
                 industryName = it.industry?.name
@@ -40,8 +40,8 @@ class AssetService(
             AssetUpsertDto(
                 id = it.id,
                 name = it.name,
-                type = it.type,
-                currency = it.currency,
+                type = AutocompleteOption(it.type, it.type.value),
+                currency = AutocompleteOption(it.currency, it.currency.value),
                 code = it.code,
                 description = it.description,
                 industry = if (it.industry != null) AutocompleteOption(it.industry.id, it.industry.name) else null
@@ -60,8 +60,8 @@ class AssetService(
         val asset = Asset(
             userId = userId,
             name = dto.name,
-            type = dto.type,
-            currency = dto.currency,
+            type = dto.type.value,
+            currency = dto.currency.value,
             code = dto.code,
             description = dto.description,
             industry = industry,
@@ -72,7 +72,7 @@ class AssetService(
 
     @Transactional
     fun update(dto: AssetUpsertDto): UUID {
-        val asset = assetRepository.findById(dto.id)
+        val asset = assetRepository.findById(dto.id!!)
             .orElseThrow { throw EntityNotFoundException(Asset::class.java.simpleName, dto.id) }
         val industry = if (dto.industry != null) {
             industryRepository.findById(dto.industry.value)
@@ -83,8 +83,8 @@ class AssetService(
 
         val copiedAsset = asset.copy(
             name = dto.name,
-            type = dto.type,
-            currency = dto.currency,
+            type = dto.type.value,
+            currency = dto.currency.value,
             code = dto.code,
             description = dto.description,
             industry = industry,
