@@ -1,5 +1,6 @@
 package com.fincontrol.controller
 
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.BankAccountUpsertDto
 import com.fincontrol.dto.BrokerAccountListDto
 import com.fincontrol.dto.BrokerAccountUpsertDto
@@ -33,4 +34,7 @@ class BrokerAccountController(
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable id: UUID) = brokerAccountService.delete(id)
+
+    @GetMapping("selects")
+    fun findSelects(): List<AutocompleteOption<UUID>> = brokerAccountService.findSelects()
 }
