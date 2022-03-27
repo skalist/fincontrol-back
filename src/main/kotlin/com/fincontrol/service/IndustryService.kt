@@ -1,5 +1,6 @@
 package com.fincontrol.service
 
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.IndustryListDto
 import com.fincontrol.dto.IndustryUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
@@ -42,5 +43,10 @@ class IndustryService(
     @Transactional
     fun delete(id: UUID) {
         industryRepository.deleteById(id)
+    }
+
+    fun findSelects(): List<AutocompleteOption<UUID>> {
+        val userId = authenticationFacade.getUserId()
+        return industryRepository.findAllByUserId(userId).map { AutocompleteOption(it.id, it.name) }
     }
 }

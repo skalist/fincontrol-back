@@ -1,5 +1,6 @@
 package com.fincontrol.controller
 
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.IndustryListDto
 import com.fincontrol.dto.IndustryUpsertDto
 import com.fincontrol.service.IndustryService
@@ -32,4 +33,7 @@ class IndustryController(
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable id: UUID) = industryService.delete(id)
+
+    @GetMapping("selects")
+    fun findSelects(): List<AutocompleteOption<UUID>> = industryService.findSelects()
 }
