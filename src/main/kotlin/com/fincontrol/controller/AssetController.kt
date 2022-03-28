@@ -2,6 +2,7 @@ package com.fincontrol.controller
 
 import com.fincontrol.dto.AssetListDto
 import com.fincontrol.dto.AssetUpsertDto
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.service.AssetService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -32,4 +33,7 @@ class AssetController(
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable id: UUID) = assetService.delete(id)
+
+    @GetMapping("selects")
+    fun findSelects(): List<AutocompleteOption<UUID>> = assetService.findSelects()
 }

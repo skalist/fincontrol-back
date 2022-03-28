@@ -1,5 +1,6 @@
 package com.fincontrol.service
 
+import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.BankAccountUpsertDto
 import com.fincontrol.dto.BrokerAccountListDto
 import com.fincontrol.dto.BrokerAccountUpsertDto
@@ -43,4 +44,9 @@ class BrokerAccountService(
 
     @Transactional
     fun delete(id: UUID) = brokerAccountRepository.deleteById(id)
+
+    fun findSelects(): List<AutocompleteOption<UUID>> {
+        val userId = authenticationFacade.getUserId()
+        return brokerAccountRepository.findAllByUserId(userId).map { AutocompleteOption(it.id, it.name) }
+    }
 }

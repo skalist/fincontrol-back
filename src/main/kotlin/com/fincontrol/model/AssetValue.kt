@@ -17,8 +17,12 @@ data class AssetValue(
     @ManyToOne
     @JoinColumn(name = "asset_id")
     val asset: Asset,
+    @ManyToOne
+    @JoinColumn(name = "broker_account_id")
+    val brokerAccount: BrokerAccount,
     @Enumerated(EnumType.STRING)
     val event: AssetEvent,
     val dateCreated: LocalDate,
+    val assetsCount: Int,
     val cost: BigDecimal,
 )

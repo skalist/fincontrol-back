@@ -95,4 +95,9 @@ class AssetService(
 
     @Transactional
     fun delete(id: UUID) = assetRepository.deleteById(id)
+
+    fun findSelects(): List<AutocompleteOption<UUID>> {
+        val userId = authenticationFacade.getUserId()
+        return assetRepository.findAllByUserId(userId).map { AutocompleteOption(it.id, it.name) }
+    }
 }
