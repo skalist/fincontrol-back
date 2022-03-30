@@ -2,7 +2,10 @@ package com.fincontrol.controller
 
 import com.fincontrol.dto.BankOperationListDto
 import com.fincontrol.dto.BankOperationUpsertDto
+import com.fincontrol.filter.BankOperationFilter
 import com.fincontrol.service.BankOperationService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +22,7 @@ class BankOperationController(
     private val bankOperationService: BankOperationService,
 ) {
     @GetMapping
-    fun findAll(): List<BankOperationListDto> = bankOperationService.findAll()
+    fun findAll(filter: BankOperationFilter, pageable: Pageable) = bankOperationService.findAll(filter, pageable)
 
     @GetMapping("{id}")
     fun findById(@PathVariable id: UUID): BankOperationUpsertDto = bankOperationService.findById(id)
