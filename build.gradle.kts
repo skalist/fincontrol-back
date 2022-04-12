@@ -6,6 +6,7 @@ plugins {
 	kotlin("jvm") version "1.6.10"
 	kotlin("plugin.spring") version "1.6.10"
 	kotlin("plugin.jpa") version "1.6.10"
+	kotlin("kapt") version "1.6.10"
 }
 
 group = "com.fincontrol"
@@ -31,6 +32,8 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+
+	kapt("org.hibernate:hibernate-jpamodelgen:5.6.7.Final")
 }
 
 tasks.withType<KotlinCompile> {

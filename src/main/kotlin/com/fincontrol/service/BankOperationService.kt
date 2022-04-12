@@ -4,10 +4,13 @@ import com.fincontrol.dto.AutocompleteOption
 import com.fincontrol.dto.BankOperationListDto
 import com.fincontrol.dto.BankOperationUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
+import com.fincontrol.filter.BankOperationFilter
 import com.fincontrol.model.BankOperation
 import com.fincontrol.repository.BankAccountRepository
 import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.repository.OperationCategoryRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -20,9 +23,9 @@ class BankOperationService(
     private val operationCategoryRepository: OperationCategoryRepository,
     private val bankAccountRepository: BankAccountRepository,
 ) {
-    fun findAll(): List<BankOperationListDto> {
+    fun findAll(filter: BankOperationFilter, pageable: Pageable): Page<BankOperationListDto> {
         val userId = authenticationFacade.getUserId()
-        return bankOperationRepository.findAllByUserIdOrderByDateCreatedDesc(userId)
+        return bankOperationRepository.findAll(filter.getSpecification(userId), pageable)
             .map {
                 BankOperationListDto(
                     id = it.id,
