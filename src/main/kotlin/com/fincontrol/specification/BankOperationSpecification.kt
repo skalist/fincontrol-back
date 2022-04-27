@@ -2,6 +2,7 @@ package com.fincontrol.specification
 
 import com.fincontrol.model.BankOperation
 import com.fincontrol.model.BankOperation_
+import com.fincontrol.model.OperationType
 import org.springframework.data.jpa.domain.Specification
 import java.time.LocalDate
 import java.util.UUID
@@ -25,6 +26,12 @@ object BankOperationSpecification {
                 predicates.add(cb.lessThanOrEqualTo(root[BankOperation_.dateCreated], endDate))
             }
             return@Specification cb.and(*predicates.toTypedArray())
+        }
+    }
+
+    fun typeEqual(type: OperationType): Specification<BankOperation> {
+        return Specification<BankOperation> { root, _, cb ->
+            return@Specification cb.equal(root[BankOperation_.type], type)
         }
     }
 }
