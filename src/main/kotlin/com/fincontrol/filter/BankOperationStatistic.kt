@@ -1,14 +1,13 @@
 package com.fincontrol.filter
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fincontrol.model.BankOperation
 import com.fincontrol.model.OperationType
 import com.fincontrol.specification.BankOperationSpecification
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.data.jpa.domain.Specification.*
+import org.springframework.data.jpa.domain.Specification.where
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 data class BankOperationStatisticByTypeFilter(
     @DateTimeFormat(pattern = "yyyy-MM-dd")

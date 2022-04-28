@@ -1,10 +1,13 @@
 package com.fincontrol.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fincontrol.model.OperationType
 import java.math.BigDecimal
+import java.time.LocalDate
 
 data class BankOperationStatisticByTypeDto(
-    val months: List<Int>,
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val months: List<LocalDate>,
     val series: Map<OperationType, List<BigDecimal>>,
 )
 
