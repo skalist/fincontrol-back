@@ -29,9 +29,9 @@ internal class BankOperationStatisticServiceTest {
     @Test
     fun `should return correct statistic by type`() {
         val values = listOf(
-            BankOperationStatisticByType(OperationType.EXPENSE, 1, BigDecimal(100)),
-            BankOperationStatisticByType(OperationType.INCOME, 2, BigDecimal(200)),
-            BankOperationStatisticByType(OperationType.EXPENSE, 3, BigDecimal(10)),
+            BankOperationStatisticByType(OperationType.EXPENSE, 1, 2000, BigDecimal(100)),
+            BankOperationStatisticByType(OperationType.INCOME, 2, 2000, BigDecimal(200)),
+            BankOperationStatisticByType(OperationType.EXPENSE, 4, 2000, BigDecimal(10)),
         )
         every {
             entityManager.criteriaBuilder.createQuery(BankOperationStatisticByType::class.java)
@@ -43,15 +43,17 @@ internal class BankOperationStatisticServiceTest {
             BankOperationStatisticByTypeFilter(any(), any())
         )
 
-        Assertions.assertEquals(statistic.months.size, 3)
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!!.size, 3)
-        Assertions.assertEquals(statistic.series[OperationType.INCOME]!!.size, 3)
+        Assertions.assertEquals(statistic.months.size, 4)
+        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!!.size, 4)
+        Assertions.assertEquals(statistic.series[OperationType.INCOME]!!.size, 4)
         Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![0], BigDecimal(100))
         Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![1], BigDecimal(0))
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![2], BigDecimal(10))
+        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![2], BigDecimal(0))
+        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![3], BigDecimal(10))
         Assertions.assertEquals(statistic.series[OperationType.INCOME]!![0], BigDecimal(0))
         Assertions.assertEquals(statistic.series[OperationType.INCOME]!![1], BigDecimal(200))
         Assertions.assertEquals(statistic.series[OperationType.INCOME]!![2], BigDecimal(0))
+        Assertions.assertEquals(statistic.series[OperationType.INCOME]!![3], BigDecimal(0))
     }
 
     @Test

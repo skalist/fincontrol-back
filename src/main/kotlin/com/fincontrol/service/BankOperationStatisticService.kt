@@ -26,17 +26,25 @@ class BankOperationStatisticService(
 
     fun getBankOperationStatisticByType(filter: BankOperationStatisticByTypeFilter): BankOperationStatisticByTypeDto {
         val result = getGroupedBankOperations(filter)
-        val months = result.map { it.month }.distinct().sorted()
+        val resultDates = result.map { LocalDate.of(it.year, it.month, 1) }.sorted()
+        val labels = mutableListOf<LocalDate>()
+        var iterableMonth = resultDates.first()
+        while (iterableMonth.isBefore(resultDates.last().plusMonths(1))) {
+            labels += iterableMonth
+            iterableMonth = iterableMonth.plusMonths(1)
+        }
+
         val series = result.groupBy { it.type }.map { (type, rows) ->
-            val monthValues = MutableList<BigDecimal>(months.size) { BigDecimal.ZERO }
+            val monthValues = MutableList<BigDecimal>(labels.size) { BigDecimal.ZERO }
             rows.forEach { row ->
-                val index = months.indexOf(row.month)
+                val rowDate = LocalDate.of(row.year, row.month, 1)
+                val index = labels.indexOf(rowDate)
                 monthValues[index] = row.value
             }
             type to monthValues
         }.toMap()
 
-        return BankOperationStatisticByTypeDto(months, series)
+        return BankOperationStatisticByTypeDto(labels, series)
     }
 
     private fun getGroupedBankOperations(filter: BankOperationStatisticByTypeFilter): List<BankOperationStatisticByType> {
@@ -45,10 +53,11 @@ class BankOperationStatisticService(
         val query = builder.createQuery(BankOperationStatisticByType::class.java)
         val root = query.from(BankOperation::class.java)
         val monthOfYear = builder.function("month", Int::class.java, root[BankOperation_.dateCreated])
+        val year = builder.function("year", Int::class.java, root[BankOperation_.dateCreated])
 
-        query.multiselect(root[BankOperation_.type], monthOfYear, builder.sum(root[BankOperation_.cost]))
+        query.multiselect(root[BankOperation_.type], monthOfYear, year, builder.sum(root[BankOperation_.cost]))
         query.where(filter.getSpecification(userId).toPredicate(root, query, builder))
-        query.groupBy(root[BankOperation_.type], monthOfYear)
+        query.groupBy(root[BankOperation_.type], monthOfYear, year)
 
         return entityManager.createQuery(query).resultList
     }
