@@ -2,6 +2,7 @@ package com.fincontrol.controller
 
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
 import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
+import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.service.BankOperationStatisticService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,6 +21,13 @@ class BankOperationStatisticController(
     fun getExpenseValueStatisticByCategory(filter: ExpenseValueStatisticByCategoryFilter) =
         bankOperationStatisticService.getBankOperationStatisticByCategory(filter)
 
-    @GetMapping("/last-month")
+    @GetMapping("last-month")
     fun getLastFilledMonth() = bankOperationStatisticService.getLastFilledMonth()
+
+    @GetMapping("annual-statistic-by-category")
+    fun getAnnualStatisticByCategory(filter: AnnualStatisticByCategoryFilter) =
+        bankOperationStatisticService.getAnnualStatisticByCategory(filter)
+
+    @GetMapping("most-expensive-category-for-last-year")
+    fun getMostExpensiveCategoryForLastYear() = bankOperationStatisticService.getMostExpensiveCategoryForLastYear()
 }

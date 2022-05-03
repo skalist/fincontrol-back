@@ -1,10 +1,9 @@
 package com.fincontrol.service
 
-import com.fincontrol.dto.BankOperationStatisticByCategoryDto
-import com.fincontrol.dto.BankOperationStatisticByTypeDto
-import com.fincontrol.dto.LastMonthOfBankOperation
+import com.fincontrol.dto.*
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
 import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
+import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.model.*
 import com.fincontrol.specification.BankOperationSpecification
 import org.springframework.data.jpa.domain.Specification.where
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.UUID
 import javax.persistence.EntityManager
 
 @Service
@@ -26,13 +26,9 @@ class BankOperationStatisticService(
 
     fun getBankOperationStatisticByType(filter: BankOperationStatisticByTypeFilter): BankOperationStatisticByTypeDto {
         val result = getGroupedBankOperations(filter)
-        val resultDates = result.map { LocalDate.of(it.year, it.month, 1) }.sorted()
-        val labels = mutableListOf<LocalDate>()
-        var iterableMonth = resultDates.first()
-        while (iterableMonth.isBefore(resultDates.last().plusMonths(1))) {
-            labels += iterableMonth
-            iterableMonth = iterableMonth.plusMonths(1)
-        }
+        val labels = getLabelsForAnnualStatistic(
+            availaibleMonths = result.map { LocalDate.of(it.year, it.month, 1) },
+        )
 
         val series = result.groupBy { it.type }.map { (type, rows) ->
             val monthValues = MutableList<BigDecimal>(labels.size) { BigDecimal.ZERO }
@@ -113,11 +109,70 @@ class BankOperationStatisticService(
         query.where(specification.toPredicate(root, query, builder))
         query.select(builder.greatest(root[BankOperation_.dateCreated]))
 
-        return entityManager.createQuery(query).singleResult.let {
-            if (it == null) {
-                return@let null
-            }
+        return entityManager.createQuery(query).singleResult?.let {
             LastMonthOfBankOperation(it.monthValue, it.year)
         }
+    }
+
+    fun getAnnualStatisticByCategory(filter: AnnualStatisticByCategoryFilter): AnnualBankOperationStatisticByCategoryDto {
+        val result = getAnnualGroupedBankOperationStatisticByCategory(filter)
+        val labels = getLabelsForAnnualStatistic(
+            availaibleMonths = result.map { LocalDate.of(it.year, it.month, 1) },
+        )
+
+        val series = MutableList<BigDecimal>(labels.size) { BigDecimal.ZERO }
+        result.forEach { row ->
+            val rowDate = LocalDate.of(row.year, row.month, 1)
+            val index = labels.indexOf(rowDate)
+            series[index] = row.value
+        }
+
+        return AnnualBankOperationStatisticByCategoryDto(labels, series)
+    }
+
+    fun getLabelsForAnnualStatistic(availaibleMonths: List<LocalDate>): List<LocalDate> {
+        val sortedMonths = availaibleMonths.sorted()
+        val labels = mutableListOf<LocalDate>()
+        var iterableMonth = sortedMonths.first()
+        while (iterableMonth.isBefore(sortedMonths.last().plusMonths(1))) {
+            labels += iterableMonth
+            iterableMonth = iterableMonth.plusMonths(1)
+        }
+
+        return labels
+    }
+
+    private fun getAnnualGroupedBankOperationStatisticByCategory(
+        filter: AnnualStatisticByCategoryFilter
+    ): List<AnnualBankOperationStatisticByCategory> {
+        val userId = authenticationFacade.getUserId()
+        val builder = entityManager.criteriaBuilder
+        val query = builder.createQuery(AnnualBankOperationStatisticByCategory::class.java)
+        val root = query.from(BankOperation::class.java)
+        val monthOfYear = builder.function("month", Int::class.java, root[BankOperation_.dateCreated])
+        val year = builder.function("year", Int::class.java, root[BankOperation_.dateCreated])
+
+        query.multiselect(monthOfYear, year, builder.sum(root[BankOperation_.cost]))
+        query.where(filter.getSpecification(userId).toPredicate(root, query, builder))
+        query.groupBy(monthOfYear, year)
+
+        return entityManager.createQuery(query).resultList
+    }
+
+    fun getMostExpensiveCategoryForLastYear(): AutocompleteOption<UUID>? {
+        val userId = authenticationFacade.getUserId()
+        val builder = entityManager.criteriaBuilder
+        val query = builder.createQuery(MaximumMonthlyCategory::class.java)
+        val root = query.from(BankOperation::class.java)
+        query.multiselect(root[BankOperation_.operationCategory], builder.sum(root[BankOperation_.cost]))
+        val specification =
+            where(BankOperationSpecification.createdDateBetween(LocalDate.now().minusYears(1), LocalDate.now()))
+                .and(BankOperationSpecification.typeEqual(OperationType.EXPENSE))
+                .and(BankOperationSpecification.userIdEqual(userId))
+        query.where(specification.toPredicate(root, query, builder))
+        query.groupBy(root[BankOperation_.operationCategory])
+
+        val resultList = entityManager.createQuery(query).resultList
+        return resultList.maxByOrNull { it.sumCosts }?.category?.let { AutocompleteOption(it.id, it.name) }
     }
 }

@@ -34,3 +34,18 @@ data class ExpenseValueStatisticByCategoryFilter(
             .and(BankOperationSpecification.typeEqual(OperationType.EXPENSE))
     }
 }
+
+data class AnnualStatisticByCategoryFilter(
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    val startDate: LocalDate?,
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    val endDate: LocalDate?,
+    val categoryId: UUID,
+) {
+    fun getSpecification(userId: UUID): Specification<BankOperation> {
+        return where(BankOperationSpecification.userIdEqual(userId))
+            .and(BankOperationSpecification.createdDateBetween(startDate, endDate))
+            .and(BankOperationSpecification.typeEqual(OperationType.EXPENSE))
+            .and(BankOperationSpecification.categoryIdEqual(categoryId))
+    }
+}

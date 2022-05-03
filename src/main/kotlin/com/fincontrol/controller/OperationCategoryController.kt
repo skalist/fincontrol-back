@@ -1,8 +1,8 @@
 package com.fincontrol.controller
 
-import OperationCategoryListDto
-import OperationCategoryUpsertDto
 import com.fincontrol.dto.AutocompleteOption
+import com.fincontrol.dto.OperationCategoryListDto
+import com.fincontrol.dto.OperationCategoryUpsertDto
 import com.fincontrol.service.OperationCategoryService
 import org.springframework.web.bind.annotation.*
 import java.util.*

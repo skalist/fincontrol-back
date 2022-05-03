@@ -1,8 +1,8 @@
 package com.fincontrol.service
 
-import OperationCategoryListDto
-import OperationCategoryUpsertDto
 import com.fincontrol.dto.AutocompleteOption
+import com.fincontrol.dto.OperationCategoryListDto
+import com.fincontrol.dto.OperationCategoryUpsertDto
 import com.fincontrol.exception.EntityNotFoundException
 import com.fincontrol.model.OperationCategory
 import com.fincontrol.repository.OperationCategoryRepository
