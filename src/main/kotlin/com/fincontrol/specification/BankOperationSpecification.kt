@@ -37,7 +37,7 @@ object BankOperationSpecification {
     }
 
     fun categoryIdEqual(categoryId: UUID): Specification<BankOperation> {
-        return Specification<BankOperation> { root, query, cb ->
+        return Specification<BankOperation> { root, _, cb ->
             return@Specification cb.equal(root[BankOperation_.operationCategory][OperationCategory_.id], categoryId)
         }
     }
