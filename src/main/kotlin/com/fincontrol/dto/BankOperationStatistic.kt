@@ -21,3 +21,9 @@ data class LastMonthOfBankOperation(
     val month: Int,
     val year: Int,
 )
+
+data class AnnualBankOperationStatisticByCategoryDto(
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val labels: List<LocalDate>,
+    val series: List<BigDecimal>,
+)

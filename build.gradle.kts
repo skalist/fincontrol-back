@@ -34,6 +34,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("io.mockk:mockk:1.12.3")
+	testImplementation("org.assertj:assertj-core:3.22.0")
 
 	kapt("org.hibernate:hibernate-jpamodelgen:5.6.7.Final")
 }

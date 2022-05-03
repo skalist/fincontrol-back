@@ -1,14 +1,16 @@
 package com.fincontrol.service
 
+import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
 import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
+import com.fincontrol.model.AnnualBankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByType
 import com.fincontrol.model.OperationType
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
@@ -22,7 +24,10 @@ internal class BankOperationStatisticServiceTest {
     private val entityManager = mockk<EntityManager>(relaxed = true)
     private val authenticationFacade = mockk<AuthenticationFacade>()
     private val fakeBankOperationByTypeQuery = mockk<CriteriaQuery<BankOperationStatisticByType>>(relaxed = true)
-    private val fakeBankOperationByCategoryQuery = mockk<CriteriaQuery<BankOperationStatisticByCategory>>(relaxed = true)
+    private val fakeBankOperationByCategoryQuery =
+        mockk<CriteriaQuery<BankOperationStatisticByCategory>>(relaxed = true)
+    private val fakeAnnualBankOperationByCategoryQuery =
+        mockk<CriteriaQuery<AnnualBankOperationStatisticByCategory>>(relaxed = true)
 
     private val bankOperationStatisticService = BankOperationStatisticService(entityManager, authenticationFacade)
 
@@ -43,17 +48,11 @@ internal class BankOperationStatisticServiceTest {
             BankOperationStatisticByTypeFilter(any(), any())
         )
 
-        Assertions.assertEquals(statistic.months.size, 4)
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!!.size, 4)
-        Assertions.assertEquals(statistic.series[OperationType.INCOME]!!.size, 4)
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![0], BigDecimal(100))
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![1], BigDecimal(0))
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![2], BigDecimal(0))
-        Assertions.assertEquals(statistic.series[OperationType.EXPENSE]!![3], BigDecimal(10))
-        Assertions.assertEquals(statistic.series[OperationType.INCOME]!![0], BigDecimal(0))
-        Assertions.assertEquals(statistic.series[OperationType.INCOME]!![1], BigDecimal(200))
-        Assertions.assertEquals(statistic.series[OperationType.INCOME]!![2], BigDecimal(0))
-        Assertions.assertEquals(statistic.series[OperationType.INCOME]!![3], BigDecimal(0))
+        assertThat(statistic.months.size).isEqualTo(4)
+        assertThat(statistic.series[OperationType.EXPENSE])
+            .isEqualTo(listOf(BigDecimal(100), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal(10)))
+        assertThat(statistic.series[OperationType.INCOME])
+            .isEqualTo(listOf(BigDecimal.ZERO, BigDecimal(200), BigDecimal.ZERO, BigDecimal.ZERO))
     }
 
     @Test
@@ -73,13 +72,9 @@ internal class BankOperationStatisticServiceTest {
             ExpenseValueStatisticByCategoryFilter(1, 2000)
         )
 
-        Assertions.assertEquals(statistic.labels.size, 3)
-        Assertions.assertEquals(statistic.series.size, 3)
-
-        Assertions.assertEquals(statistic.labels[0], "Category2")
-        Assertions.assertEquals(statistic.labels[1], "Category3")
-        Assertions.assertEquals(statistic.labels[2], "Category1")
-        Assertions.assertEquals(statistic.other, BigDecimal.ZERO)
+        assertThat(statistic.labels).isEqualTo(listOf("Category2", "Category3", "Category1"))
+        assertThat(statistic.series).isEqualTo(listOf(BigDecimal(30), BigDecimal(20), BigDecimal(10)))
+        assertThat(statistic.other).isEqualTo(BigDecimal.ZERO)
     }
 
     @Test
@@ -98,9 +93,30 @@ internal class BankOperationStatisticServiceTest {
             ExpenseValueStatisticByCategoryFilter(1, 2000)
         )
 
-        Assertions.assertEquals(statistic.labels.size, 9)
-        Assertions.assertEquals(statistic.series.size, 9)
+        assertThat(statistic.labels.size).isEqualTo(9)
+        assertThat(statistic.series.size).isEqualTo(9)
+        assertThat(statistic.other).isEqualTo(BigDecimal(550))
+    }
 
-        Assertions.assertEquals(statistic.other, BigDecimal(550))
+    @Test
+    fun `should return correct annual statistic by category`() {
+        val values = listOf(
+            AnnualBankOperationStatisticByCategory(1, 2000, BigDecimal(100)),
+            AnnualBankOperationStatisticByCategory(3, 2000, BigDecimal(150)),
+            AnnualBankOperationStatisticByCategory(4, 2000, BigDecimal(300)),
+        )
+        every {
+            entityManager.criteriaBuilder.createQuery(AnnualBankOperationStatisticByCategory::class.java)
+        } returns fakeAnnualBankOperationByCategoryQuery
+        every { entityManager.createQuery(fakeAnnualBankOperationByCategoryQuery).resultList } returns values
+        every { authenticationFacade.getUserId() } returns UUID.randomUUID()
+
+        val statistic = bankOperationStatisticService.getAnnualStatisticByCategory(
+            AnnualStatisticByCategoryFilter(any(), any(), UUID.randomUUID())
+        )
+
+        assertThat(statistic.labels.size).isEqualTo(4)
+        assertThat(statistic.series)
+            .isEqualTo(listOf(BigDecimal(100), BigDecimal.ZERO, BigDecimal(150), BigDecimal(300)))
     }
 }

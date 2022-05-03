@@ -2,6 +2,7 @@ package com.fincontrol.specification
 
 import com.fincontrol.model.BankOperation
 import com.fincontrol.model.BankOperation_
+import com.fincontrol.model.OperationCategory_
 import com.fincontrol.model.OperationType
 import org.springframework.data.jpa.domain.Specification
 import java.time.LocalDate
@@ -32,6 +33,12 @@ object BankOperationSpecification {
     fun typeEqual(type: OperationType): Specification<BankOperation> {
         return Specification<BankOperation> { root, _, cb ->
             return@Specification cb.equal(root[BankOperation_.type], type)
+        }
+    }
+
+    fun categoryIdEqual(categoryId: UUID): Specification<BankOperation> {
+        return Specification<BankOperation> { root, query, cb ->
+            return@Specification cb.equal(root[BankOperation_.operationCategory][OperationCategory_.id], categoryId)
         }
     }
 }

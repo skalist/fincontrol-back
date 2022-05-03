@@ -1,3 +1,5 @@
+package com.fincontrol.dto
+
 import java.util.*
 
 data class OperationCategoryListDto(
