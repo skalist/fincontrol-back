@@ -132,6 +132,9 @@ class BankOperationStatisticService(
 
     fun getLabelsForAnnualStatistic(availaibleMonths: List<LocalDate>): List<LocalDate> {
         val sortedMonths = availaibleMonths.sorted()
+        if (sortedMonths.isEmpty()) {
+            return emptyList()
+        }
         val labels = mutableListOf<LocalDate>()
         var iterableMonth = sortedMonths.first()
         while (iterableMonth.isBefore(sortedMonths.last().plusMonths(1))) {
