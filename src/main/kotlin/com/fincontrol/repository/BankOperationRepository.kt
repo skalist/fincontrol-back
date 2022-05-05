@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.util.*
 
 interface BankOperationRepository: JpaRepository<BankOperation, UUID>, JpaSpecificationExecutor<BankOperation> {
-    fun findAllByUserIdOrderByDateCreatedDesc(userId: UUID): List<BankOperation>
 }

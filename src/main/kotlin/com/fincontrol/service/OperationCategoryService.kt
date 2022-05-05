@@ -18,7 +18,7 @@ class OperationCategoryService(
 ) {
     fun findAll(): List<OperationCategoryListDto> {
         val userId = authenticationFacade.getUserId()
-        return operationCategoryRepository.findAllByUserId(userId)
+        return operationCategoryRepository.findAllByUserIdOrderByName(userId)
             .map { OperationCategoryListDto(it.id, it.name) }
     }
 
@@ -52,7 +52,7 @@ class OperationCategoryService(
 
     fun findSelects(): List<AutocompleteOption<UUID>> {
         val userId = authenticationFacade.getUserId()
-        return operationCategoryRepository.findAllByUserId(userId)
+        return operationCategoryRepository.findAllByUserIdOrderByName(userId)
             .map { AutocompleteOption(it.id, it.name) }
     }
 }
