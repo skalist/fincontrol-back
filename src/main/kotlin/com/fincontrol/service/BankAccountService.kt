@@ -18,7 +18,7 @@ class BankAccountService(
 ) {
     fun findAll(): List<BankAccountListDto> {
         val userId = authenticationFacade.getUserId()
-        return bankAccountRepository.findAllByUserId(userId)
+        return bankAccountRepository.findAllByUserIdOrderByName(userId)
             .map { BankAccountListDto(it.id, it.name) }
     }
 
@@ -52,7 +52,7 @@ class BankAccountService(
 
     fun findSelects(): List<AutocompleteOption<UUID>> {
         val userId = authenticationFacade.getUserId()
-        return bankAccountRepository.findAllByUserId(userId)
+        return bankAccountRepository.findAllByUserIdOrderByName(userId)
             .map { AutocompleteOption(it.id, it.name) }
     }
 }
