@@ -1,9 +1,6 @@
 package com.fincontrol.specification
 
-import com.fincontrol.model.BankOperation
-import com.fincontrol.model.BankOperation_
-import com.fincontrol.model.OperationCategory_
-import com.fincontrol.model.OperationType
+import com.fincontrol.model.*
 import org.springframework.data.jpa.domain.Specification
 import java.time.LocalDate
 import java.util.UUID
@@ -36,9 +33,21 @@ object BankOperationSpecification {
         }
     }
 
-    fun categoryIdEqual(categoryId: UUID): Specification<BankOperation> {
+    fun categoryIdEqual(categoryId: UUID?): Specification<BankOperation>? {
+        if (categoryId == null) {
+            return null
+        }
         return Specification<BankOperation> { root, _, cb ->
             return@Specification cb.equal(root[BankOperation_.operationCategory][OperationCategory_.id], categoryId)
+        }
+    }
+    
+    fun bankAccountIdEqual(bankAccountId: UUID?): Specification<BankOperation>? {
+        if (bankAccountId == null) {
+            return null
+        }
+        return Specification<BankOperation> {root, _, cb ->
+            return@Specification cb.equal(root[BankOperation_.bankAccount][BankAccount_.id], bankAccountId)
         }
     }
 }
