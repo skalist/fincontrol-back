@@ -7,6 +7,7 @@ import com.fincontrol.model.AnnualBankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByType
 import com.fincontrol.model.OperationType
+import com.fincontrol.repository.BankOperationRepository
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -21,6 +22,7 @@ import javax.persistence.criteria.CriteriaQuery
 
 @ExtendWith(MockKExtension::class)
 internal class BankOperationStatisticServiceTest {
+    private val bankOperationRepository = mockk<BankOperationRepository>()
     private val entityManager = mockk<EntityManager>(relaxed = true)
     private val authenticationFacade = mockk<AuthenticationFacade>()
     private val fakeBankOperationByTypeQuery = mockk<CriteriaQuery<BankOperationStatisticByType>>(relaxed = true)
@@ -29,7 +31,8 @@ internal class BankOperationStatisticServiceTest {
     private val fakeAnnualBankOperationByCategoryQuery =
         mockk<CriteriaQuery<AnnualBankOperationStatisticByCategory>>(relaxed = true)
 
-    private val bankOperationStatisticService = BankOperationStatisticService(entityManager, authenticationFacade)
+    private val bankOperationStatisticService =
+        BankOperationStatisticService(entityManager, authenticationFacade, bankOperationRepository)
 
     @Test
     fun `should return correct statistic by type`() {

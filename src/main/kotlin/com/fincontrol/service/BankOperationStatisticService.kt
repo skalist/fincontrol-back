@@ -1,17 +1,20 @@
 package com.fincontrol.service
 
 import com.fincontrol.dto.*
+import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
 import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
-import com.fincontrol.filter.AnnualStatisticByCategoryFilter
+import com.fincontrol.filter.MedianStatisticByCategoryFilter
 import com.fincontrol.model.*
+import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.specification.BankOperationSpecification
+import com.fincontrol.utils.MedianStatisticUtils
 import org.springframework.data.jpa.domain.Specification.where
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 import javax.persistence.EntityManager
 
 @Service
@@ -19,6 +22,7 @@ import javax.persistence.EntityManager
 class BankOperationStatisticService(
     private val entityManager: EntityManager,
     private val authenticationFacade: AuthenticationFacade,
+    private val bankOperationRepository: BankOperationRepository,
 ) {
     companion object {
         const val MAX_NUMBER_DISPLAYING_CATEGORIES = 9
@@ -165,7 +169,7 @@ class BankOperationStatisticService(
     fun getMostExpensiveCategoryForLastYear(): AutocompleteOption<UUID>? {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder
-        val query = builder.createQuery(MaximumMonthlyCategory::class.java)
+        val query = builder.createQuery(CostByCategory::class.java)
         val root = query.from(BankOperation::class.java)
         query.multiselect(root[BankOperation_.operationCategory], builder.sum(root[BankOperation_.cost]))
         val specification =
@@ -177,5 +181,33 @@ class BankOperationStatisticService(
 
         val resultList = entityManager.createQuery(query).resultList
         return resultList.maxByOrNull { it.sumCosts }?.category?.let { AutocompleteOption(it.id, it.name) }
+    }
+
+    fun getMostUsableCategoryForLastYear(): AutocompleteOption<UUID>? {
+        val userId = authenticationFacade.getUserId()
+        val builder = entityManager.criteriaBuilder
+        val query = builder.createQuery(UsageByCategory::class.java)
+        val root = query.from(BankOperation::class.java)
+        query.multiselect(root[BankOperation_.operationCategory], builder.count(root))
+        val specification =
+            where(BankOperationSpecification.createdDateBetween(LocalDate.now().minusYears(1), LocalDate.now()))
+                .and(BankOperationSpecification.userIdEqual(userId))
+                .and(BankOperationSpecification.typeEqual(OperationType.EXPENSE))
+        query.where(specification.toPredicate(root, query, builder))
+        query.groupBy(root[BankOperation_.operationCategory])
+
+        val resultList = entityManager.createQuery(query).resultList
+        return resultList.maxByOrNull { it.countUsage }?.category?.let { AutocompleteOption(it.id, it.name) }
+    }
+
+    fun getMedianStatisticByCategory(filter: MedianStatisticByCategoryFilter): List<MedianBankOperationStatisticByCategoryDto> {
+        val userId = authenticationFacade.getUserId()
+        val bankOperations = bankOperationRepository.findAll(filter.getSpecification(userId))
+        val bankOperationMap = bankOperations.groupBy { it.dateCreated.withDayOfMonth(1) }
+        return bankOperationMap.entries.map { (month, values) ->
+            val costValues = values.map { it.cost }
+            val series = MedianStatisticUtils.getMedianSeries(costValues)
+            MedianBankOperationStatisticByCategoryDto(month, series)
+        }
     }
 }
