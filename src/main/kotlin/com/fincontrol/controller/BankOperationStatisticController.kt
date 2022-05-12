@@ -1,8 +1,9 @@
 package com.fincontrol.controller
 
+import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
 import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
-import com.fincontrol.filter.AnnualStatisticByCategoryFilter
+import com.fincontrol.filter.MedianStatisticByCategoryFilter
 import com.fincontrol.service.BankOperationStatisticService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -30,4 +31,11 @@ class BankOperationStatisticController(
 
     @GetMapping("most-expensive-category-for-last-year")
     fun getMostExpensiveCategoryForLastYear() = bankOperationStatisticService.getMostExpensiveCategoryForLastYear()
+
+    @GetMapping("most-usable-category-for-last-year")
+    fun getMostUsableCategoryForLastYear() = bankOperationStatisticService.getMostUsableCategoryForLastYear()
+
+    @GetMapping("median-statistic-by-category")
+    fun getMedianStatisticByCategory(filter: MedianStatisticByCategoryFilter) =
+        bankOperationStatisticService.getMedianStatisticByCategory(filter)
 }
