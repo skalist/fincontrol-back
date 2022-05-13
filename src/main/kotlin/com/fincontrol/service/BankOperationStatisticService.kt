@@ -8,7 +8,6 @@ import com.fincontrol.filter.MedianStatisticByCategoryFilter
 import com.fincontrol.model.*
 import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.specification.BankOperationSpecification
-import com.fincontrol.utils.MedianStatisticUtils
 import org.springframework.data.jpa.domain.Specification.where
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -205,9 +204,16 @@ class BankOperationStatisticService(
         val bankOperations = bankOperationRepository.findAll(filter.getSpecification(userId))
         val bankOperationMap = bankOperations.groupBy { it.dateCreated.withDayOfMonth(1) }
         return bankOperationMap.entries.map { (month, values) ->
-            val costValues = values.map { it.cost }
-            val series = MedianStatisticUtils.getMedianSeries(costValues)
-            MedianBankOperationStatisticByCategoryDto(month, series)
+            val costValues = values.map { it.cost }.sorted()
+            val averageValue = costValues.sumOf { it }.div(BigDecimal(costValues.size))
+            MedianBankOperationStatisticByCategoryDto(
+                month,
+                listOf(costValues.minOf { it },
+                    costValues.minOf { it },
+                    averageValue,
+                    costValues.maxOf { it },
+                    costValues.maxOf { it })
+            )
         }
     }
 }
