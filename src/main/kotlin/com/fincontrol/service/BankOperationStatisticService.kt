@@ -208,11 +208,7 @@ class BankOperationStatisticService(
             val averageValue = costValues.sumOf { it }.div(BigDecimal(costValues.size))
             MedianBankOperationStatisticByCategoryDto(
                 month,
-                listOf(costValues.minOf { it },
-                    costValues.minOf { it },
-                    averageValue,
-                    costValues.maxOf { it },
-                    costValues.maxOf { it })
+                listOf(costValues.minOf { it }, averageValue, costValues.maxOf { it })
             )
         }
     }
