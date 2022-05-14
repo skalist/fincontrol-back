@@ -35,6 +35,8 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("io.mockk:mockk:1.12.3")
 	testImplementation("org.assertj:assertj-core:3.22.0")
+	testImplementation("org.testcontainers:junit-jupiter:1.17.1")
+	testImplementation("org.testcontainers:postgresql:1.17.1")
 
 	kapt("org.hibernate:hibernate-jpamodelgen:5.6.7.Final")
 }
