@@ -33,7 +33,7 @@ class JwtAuthenticationFilter(
         filterChain.doFilter(request, response)
     }
 
-    fun getJwtFromRequest(request: HttpServletRequest): String? {
+    private fun getJwtFromRequest(request: HttpServletRequest): String? {
         val authorization = request.getHeader("Authorization")
         if (authorization.startsWith("Bearer ")) {
             return authorization.substring(7, authorization.length)
