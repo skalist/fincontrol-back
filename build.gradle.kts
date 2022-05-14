@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.6.3"
+	id("org.springframework.boot") version "2.6.7"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.6.10"
-	kotlin("plugin.jpa") version "1.6.10"
-	kotlin("kapt") version "1.6.10"
+	kotlin("jvm") version "1.6.21"
+	kotlin("plugin.spring") version "1.6.21"
+	kotlin("plugin.jpa") version "1.6.21"
+	kotlin("kapt") version "1.6.21"
 }
 
 group = "com.fincontrol"
@@ -36,7 +36,7 @@ dependencies {
 	testImplementation("io.mockk:mockk:1.12.3")
 	testImplementation("org.assertj:assertj-core:3.22.0")
 
-	kapt("org.hibernate:hibernate-jpamodelgen:5.6.7.Final")
+	kapt("org.hibernate:hibernate-jpamodelgen")
 }
 
 tasks.withType<KotlinCompile> {
