@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val jwtVersion = "0.11.5"
+val mockkVersion = "1.12.3"
+val assertjVersion = "3.22.0"
+
 plugins {
 	id("org.springframework.boot") version "2.6.7"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
@@ -25,16 +29,14 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.flywaydb:flyway-core")
-	implementation("io.jsonwebtoken:jjwt-api:0.10.7")
-	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.10.7")
-	runtimeOnly("io.jsonwebtoken:jjwt-orgjson:0.10.7")
+	implementation("io.jsonwebtoken:jjwt-api:$jwtVersion")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:$jwtVersion")
+	runtimeOnly("io.jsonwebtoken:jjwt-orgjson:$jwtVersion")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("io.mockk:mockk:1.12.3")
-	testImplementation("org.assertj:assertj-core:3.22.0")
+	testImplementation("io.mockk:mockk:$mockkVersion")
+	testImplementation("org.assertj:assertj-core:$assertjVersion")
 
 	kapt("org.hibernate:hibernate-jpamodelgen")
 }
