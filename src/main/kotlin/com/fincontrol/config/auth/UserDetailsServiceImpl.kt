@@ -15,16 +15,16 @@ class UserDetailsServiceImpl(
     private val userRepository: UserRepository,
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByUsernameAndActiveIsTrue(username)
+        val user = userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("User not found with username: $username")
 
-        return UserPrincipal(user.id.toString(), user.username, user.password)
+        return UserPrincipal(user.id.toString(), user.username, user.password, user.active)
     }
 
     fun loadUserById(id: String): UserDetails {
         val user = userRepository.findById(UUID.fromString(id))
             .orElseThrow { throw UsernameNotFoundException("User not found with id: $id") }
-        return UserPrincipal(user.id.toString(), user.username, user.password)
+        return UserPrincipal(user.id.toString(), user.username, user.password, user.active)
     }
 
     @Transactional
