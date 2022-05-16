@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
+/**
+ * Service for registry of assets
+ * Implemented CRUD operations
+ */
 @Service
 @Transactional(readOnly = true)
 class AssetService(
@@ -19,6 +23,10 @@ class AssetService(
     private val authenticationFacade: AuthenticationFacade,
     private val industryRepository: IndustryRepository,
 ) {
+    /**
+     * Getting list of assets for registry
+     * @return list of dtos
+     */
     fun findAll(): List<AssetListDto> {
         val userId = authenticationFacade.getUserId()
         return assetRepository.findAllByUserId(userId).map {
@@ -34,6 +42,11 @@ class AssetService(
         }
     }
 
+    /**
+     * Getting entity of asset by identifier
+     * @param id identifier of entity
+     * @return dto of asset
+     */
     fun findById(id: UUID) = assetRepository.findById(id)
         .orElseThrow { throw EntityNotFoundException(Asset::class.java.simpleName, id) }
         .let {
@@ -48,6 +61,11 @@ class AssetService(
             )
         }
 
+    /**
+     * Create new asset entity
+     * @param dto of asset entity
+     * @return identifier of new entity
+     */
     @Transactional
     fun create(dto: AssetUpsertDto): UUID {
         val userId = authenticationFacade.getUserId()
@@ -70,6 +88,11 @@ class AssetService(
         return assetRepository.save(asset).id
     }
 
+    /**
+     * Updating existing asset entity
+     * @param dto of asset entity
+     * @return identifier of updated entity
+     */
     @Transactional
     fun update(dto: AssetUpsertDto): UUID {
         val asset = assetRepository.findById(dto.id!!)
@@ -93,9 +116,17 @@ class AssetService(
         return assetRepository.save(copiedAsset).id
     }
 
+    /**
+     * Delete asset entity by identifier
+     * @param id identifier of asset entity
+     */
     @Transactional
     fun delete(id: UUID) = assetRepository.deleteById(id)
 
+    /**
+     * Getting values of assets for autocomplete field
+     * @return autocomplete values
+     */
     fun findSelects(): List<AutocompleteOption<UUID>> {
         val userId = authenticationFacade.getUserId()
         return assetRepository.findAllByUserId(userId).map { AutocompleteOption(it.id, it.name) }
