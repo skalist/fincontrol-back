@@ -9,6 +9,9 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
 import java.util.*
 
+/**
+ * Filter for getting statistic by type divided by month
+ */
 data class BankOperationStatisticByTypeFilter(
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate?,
@@ -21,7 +24,10 @@ data class BankOperationStatisticByTypeFilter(
     }
 }
 
-data class ExpenseValueStatisticByCategoryFilter(
+/**
+ * Filter for getting monthly expense statistic by category
+ */
+data class MonthlyExpenseStatisticByCategoryFilter(
     val month: Int,
     val year: Int,
 ) {
@@ -35,7 +41,10 @@ data class ExpenseValueStatisticByCategoryFilter(
     }
 }
 
-data class AnnualStatisticByCategoryFilter(
+/**
+ * Filter for getting statistic by category divided by month
+ */
+data class ExpenseStatisticByCategoryFilter(
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate?,
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -50,6 +59,9 @@ data class AnnualStatisticByCategoryFilter(
     }
 }
 
+/**
+ * Filter for getting median statistic by category, divided by month
+ */
 data class MedianStatisticByCategoryFilter(
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate?,

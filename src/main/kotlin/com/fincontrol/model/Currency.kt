@@ -1,5 +1,8 @@
 package com.fincontrol.model
 
+/**
+ * Currency enumeration for investment
+ */
 enum class Currency(
     val value: String,
 ) {

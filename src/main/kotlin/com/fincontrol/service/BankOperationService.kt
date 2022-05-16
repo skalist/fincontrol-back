@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
+/**
+ * Service for registry of bank operations
+ * Implemented CRUD operations
+ */
 @Service
 @Transactional(readOnly = true)
 class BankOperationService(
@@ -23,6 +27,12 @@ class BankOperationService(
     private val operationCategoryRepository: OperationCategoryRepository,
     private val bankAccountRepository: BankAccountRepository,
 ) {
+    /**
+     * Getting list of bank operations for registry
+     * @param filter filter for bank operations
+     * @param pageable information about page
+     * @return page of dtos
+     */
     fun findAll(filter: BankOperationFilter, pageable: Pageable): Page<BankOperationListDto> {
         val userId = authenticationFacade.getUserId()
         return bankOperationRepository.findAll(filter.getSpecification(userId), pageable)
@@ -38,6 +48,11 @@ class BankOperationService(
             }
     }
 
+    /**
+     * Getting entity of bank operation by identifier
+     * @param id identifier of entity
+     * @return dto of bank operation
+     */
     fun findById(id: UUID): BankOperationUpsertDto {
         val bankOperation = bankOperationRepository.findById(id)
             .orElseThrow { throw EntityNotFoundException(BankOperation::class.java.simpleName, id) }
@@ -53,6 +68,11 @@ class BankOperationService(
         }
     }
 
+    /**
+     * Create new bank operation entity
+     * @param dto of bank operation entity
+     * @return identifier of new entity
+     */
     @Transactional
     fun create(dto: BankOperationUpsertDto): UUID {
         val userId = authenticationFacade.getUserId()
@@ -71,6 +91,11 @@ class BankOperationService(
         return bankOperationRepository.save(bankOperation).id
     }
 
+    /**
+     * Updating existing bank operation entity
+     * @param dto of bank operation entity
+     * @return identifier of updated entity
+     */
     @Transactional
     fun update(dto: BankOperationUpsertDto): UUID {
         val operationCategory = operationCategoryRepository.findById(dto.operationCategory.value).orElse(null)
@@ -90,6 +115,10 @@ class BankOperationService(
         return bankOperationRepository.save(copyBankOperation).id
     }
 
+    /**
+     * Delete bank operation entity by identifier
+     * @param id identifier of bank operation entity
+     */
     @Transactional
     fun delete(id: UUID) {
         bankOperationRepository.deleteById(id)

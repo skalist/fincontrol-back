@@ -6,6 +6,9 @@ import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
 
+/**
+ * Model for asset value entity
+ */
 @Entity
 data class AssetValue(
     @Id
