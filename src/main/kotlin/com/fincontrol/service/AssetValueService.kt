@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
+/**
+ * Service for registry of asset values
+ * Implemented CRUD operations
+ */
 @Service
 @Transactional(readOnly = true)
 class AssetValueService(
@@ -22,6 +26,10 @@ class AssetValueService(
     private val assetRepository: AssetRepository,
     private val brokerAccountRepository: BrokerAccountRepository,
 ) {
+    /**
+     * Getting list of asset values for registry
+     * @return list of dtos
+     */
     fun findAll(): List<AssetValueListDto> {
         val userId = authenticationFacade.getUserId()
         return assetValueRepository.findAllByUserId(userId).map {
@@ -37,6 +45,11 @@ class AssetValueService(
         }
     }
 
+    /**
+     * Getting entity of asset value by identifier
+     * @param id identifier of entity
+     * @return dto of asset
+     */
     fun findById(id: UUID) = assetValueRepository.findById(id)
         .orElseThrow { throw EntityNotFoundException(AssetValue::class.java.simpleName, id) }
         .let {
@@ -51,6 +64,11 @@ class AssetValueService(
             )
         }
 
+    /**
+     * Create new asset value entity
+     * @param dto of asset value entity
+     * @return identifier of new entity
+     */
     @Transactional
     fun create(dto: AssetValueUpsertDto): UUID {
         val userId = authenticationFacade.getUserId()
@@ -73,6 +91,11 @@ class AssetValueService(
         return assetValueRepository.save(assetValue).id
     }
 
+    /**
+     * Updating existing asset value entity
+     * @param dto of asset value entity
+     * @return identifier of updated entity
+     */
     @Transactional
     fun update(dto: AssetValueUpsertDto): UUID {
         val assetValue = assetValueRepository.findById(dto.id!!)
@@ -95,6 +118,10 @@ class AssetValueService(
         return assetValueRepository.save(copiedAssetValue).id
     }
 
+    /**
+     * Delete asset value entity by identifier
+     * @param id identifier of asset entity
+     */
     @Transactional
     fun delete(id: UUID) = assetValueRepository.deleteById(id)
 }

@@ -6,6 +6,9 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.*
 
+/**
+ * Dto for registry table of bank operations
+ */
 data class BankOperationListDto(
     val id: UUID,
     val operationCategoryName: String,
@@ -16,6 +19,9 @@ data class BankOperationListDto(
     val cost: BigDecimal,
 )
 
+/**
+ * Dto for card of bank operation
+ */
 data class BankOperationUpsertDto(
     val id: UUID?,
     val operationCategory: AutocompleteOption<UUID>,

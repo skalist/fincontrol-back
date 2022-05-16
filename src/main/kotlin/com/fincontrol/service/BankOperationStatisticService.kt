@@ -1,10 +1,10 @@
 package com.fincontrol.service
 
 import com.fincontrol.dto.*
-import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
-import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
+import com.fincontrol.filter.ExpenseStatisticByCategoryFilter
 import com.fincontrol.filter.MedianStatisticByCategoryFilter
+import com.fincontrol.filter.MonthlyExpenseStatisticByCategoryFilter
 import com.fincontrol.model.*
 import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.specification.BankOperationSpecification
@@ -16,6 +16,9 @@ import java.time.LocalDate
 import java.util.*
 import javax.persistence.EntityManager
 
+/**
+ * Service for getting statistic about bank operation
+ */
 @Service
 @Transactional(readOnly = true)
 class BankOperationStatisticService(
@@ -27,9 +30,14 @@ class BankOperationStatisticService(
         const val MAX_NUMBER_DISPLAYING_CATEGORIES = 9
     }
 
-    fun getBankOperationStatisticByType(filter: BankOperationStatisticByTypeFilter): BankOperationStatisticByTypeDto {
+    /**
+     * Get statistic by type divided into month
+     * @param filter filter value
+     * @return data statistic for apexCharts
+     */
+    fun getTotalStatisticByType(filter: BankOperationStatisticByTypeFilter): BankOperationStatisticByTypeDto {
         val result = getGroupedBankOperations(filter)
-        val labels = getLabelsForAnnualStatistic(
+        val labels = getChainOfMonthsWithoutSkippingEmpty(
             availaibleMonths = result.map { LocalDate.of(it.year, it.month, 1) },
         )
 
@@ -46,6 +54,11 @@ class BankOperationStatisticService(
         return BankOperationStatisticByTypeDto(labels, series)
     }
 
+    /**
+     * Get grouped bank operations values for total statistic by type
+     * @param filter filter value
+     * @return list of values
+     */
     private fun getGroupedBankOperations(filter: BankOperationStatisticByTypeFilter): List<BankOperationStatisticByType> {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder
@@ -61,9 +74,34 @@ class BankOperationStatisticService(
         return entityManager.createQuery(query).resultList
     }
 
-    fun getBankOperationStatisticByCategory(
-        filter: ExpenseValueStatisticByCategoryFilter,
-    ): BankOperationStatisticByCategoryDto {
+    /**
+     * Get chain of month without skipping empty month which are not represented in list
+     * @param availaibleMonths not empty months
+     * @return chain of months
+     */
+    private fun getChainOfMonthsWithoutSkippingEmpty(availaibleMonths: List<LocalDate>): List<LocalDate> {
+        val sortedMonths = availaibleMonths.sorted()
+        if (sortedMonths.isEmpty()) {
+            return emptyList()
+        }
+        val labels = mutableListOf<LocalDate>()
+        var iterableMonth = sortedMonths.first()
+        while (iterableMonth.isBefore(sortedMonths.last().plusMonths(1))) {
+            labels += iterableMonth
+            iterableMonth = iterableMonth.plusMonths(1)
+        }
+
+        return labels
+    }
+
+    /**
+     * Get monthly statistic about expense divided into category
+     * @param filter filter value
+     * @return data statistic for apexChart
+     */
+    fun getMonthlyExpenseStatisticByCategory(
+        filter: MonthlyExpenseStatisticByCategoryFilter,
+    ): MonthlyExpenseStatisticByCategoryDto {
         val result = getGroupedBankOperationByCategory(filter)
 
         val labels = mutableListOf<String>()
@@ -79,16 +117,21 @@ class BankOperationStatisticService(
             }
         }
 
-        return BankOperationStatisticByCategoryDto(labels, series, other)
+        return MonthlyExpenseStatisticByCategoryDto(labels, series, other)
     }
 
+    /**
+     * Get grouped bank operation by category with current filter
+     * @param filter filter value
+     * @return list of values
+     */
     private fun getGroupedBankOperationByCategory(
-        filter: ExpenseValueStatisticByCategoryFilter
-    ): List<BankOperationStatisticByCategory> {
+        filter: MonthlyExpenseStatisticByCategoryFilter
+    ): List<MonthlyBankOperationStatisticByCategory> {
         val userId = authenticationFacade.getUserId()
 
         val builder = entityManager.criteriaBuilder
-        val query = builder.createQuery(BankOperationStatisticByCategory::class.java)
+        val query = builder.createQuery(MonthlyBankOperationStatisticByCategory::class.java)
         val root = query.from(BankOperation::class.java)
         query.multiselect(
             root[BankOperation_.operationCategory][OperationCategory_.name],
@@ -100,6 +143,10 @@ class BankOperationStatisticService(
         return entityManager.createQuery(query).resultList
     }
 
+    /**
+     * Get last month with expense bank operations
+     * @return month and year
+     */
     fun getLastFilledMonth(): LastMonthOfBankOperation? {
         val userId = authenticationFacade.getUserId()
 
@@ -117,9 +164,14 @@ class BankOperationStatisticService(
         }
     }
 
-    fun getAnnualStatisticByCategory(filter: AnnualStatisticByCategoryFilter): AnnualBankOperationStatisticByCategoryDto {
-        val result = getAnnualGroupedBankOperationStatisticByCategory(filter)
-        val labels = getLabelsForAnnualStatistic(
+    /**
+     * Get expense statistic by category and selected period divided into month
+     * @param filter filter value
+     * @return data statistic for apexChart
+     */
+    fun getExpenseStatisticByCategory(filter: ExpenseStatisticByCategoryFilter): ExpenseStatisticByCategoryDto {
+        val result = getGroupedBankOperationsByCategory(filter)
+        val labels = getChainOfMonthsWithoutSkippingEmpty(
             availaibleMonths = result.map { LocalDate.of(it.year, it.month, 1) },
         )
 
@@ -130,30 +182,20 @@ class BankOperationStatisticService(
             series[index] = row.value
         }
 
-        return AnnualBankOperationStatisticByCategoryDto(labels, series)
+        return ExpenseStatisticByCategoryDto(labels, series)
     }
 
-    fun getLabelsForAnnualStatistic(availaibleMonths: List<LocalDate>): List<LocalDate> {
-        val sortedMonths = availaibleMonths.sorted()
-        if (sortedMonths.isEmpty()) {
-            return emptyList()
-        }
-        val labels = mutableListOf<LocalDate>()
-        var iterableMonth = sortedMonths.first()
-        while (iterableMonth.isBefore(sortedMonths.last().plusMonths(1))) {
-            labels += iterableMonth
-            iterableMonth = iterableMonth.plusMonths(1)
-        }
-
-        return labels
-    }
-
-    private fun getAnnualGroupedBankOperationStatisticByCategory(
-        filter: AnnualStatisticByCategoryFilter
-    ): List<AnnualBankOperationStatisticByCategory> {
+    /**
+     * Get grouped bank operations for statistic by category divided by month
+     * @param filter filter value
+     * @return list of values
+     */
+    private fun getGroupedBankOperationsByCategory(
+        filter: ExpenseStatisticByCategoryFilter
+    ): List<BankOperationStatisticByCategory> {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder
-        val query = builder.createQuery(AnnualBankOperationStatisticByCategory::class.java)
+        val query = builder.createQuery(BankOperationStatisticByCategory::class.java)
         val root = query.from(BankOperation::class.java)
         val monthOfYear = builder.function("month", Int::class.java, root[BankOperation_.dateCreated])
         val year = builder.function("year", Int::class.java, root[BankOperation_.dateCreated])
@@ -165,6 +207,10 @@ class BankOperationStatisticService(
         return entityManager.createQuery(query).resultList
     }
 
+    /**
+     * Get the most expensive category for last year
+     * @return category as dto for autocomplete
+     */
     fun getMostExpensiveCategoryForLastYear(): AutocompleteOption<UUID>? {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder
@@ -182,6 +228,10 @@ class BankOperationStatisticService(
         return resultList.maxByOrNull { it.sumCosts }?.category?.let { AutocompleteOption(it.id, it.name) }
     }
 
+    /**
+     * Get the most usable category for last year
+     * @return category as dto for autocomplete
+     */
     fun getMostUsableCategoryForLastYear(): AutocompleteOption<UUID>? {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder
@@ -199,6 +249,11 @@ class BankOperationStatisticService(
         return resultList.maxByOrNull { it.countUsage }?.category?.let { AutocompleteOption(it.id, it.name) }
     }
 
+    /**
+     * Statistic, that describe minimum, maximum and middle value of category for selected period
+     * @param filter filter value
+     * @return data statistic for apexChart
+     */
     fun getMedianStatisticByCategory(filter: MedianStatisticByCategoryFilter): List<MedianBankOperationStatisticByCategoryDto> {
         val userId = authenticationFacade.getUserId()
         val bankOperations = bankOperationRepository.findAll(filter.getSpecification(userId))

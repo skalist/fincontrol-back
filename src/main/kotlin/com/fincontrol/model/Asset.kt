@@ -2,14 +2,11 @@ package com.fincontrol.model
 
 import org.hibernate.annotations.Type
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
+/**
+ * Model for asset entity
+ */
 @Entity
 data class Asset(
     @Id

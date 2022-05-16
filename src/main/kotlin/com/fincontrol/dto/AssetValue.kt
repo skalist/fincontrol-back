@@ -5,7 +5,9 @@ import com.fincontrol.model.AssetEvent
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.*
-
+/**
+ * Dto for registry table of asset values
+ */
 data class AssetValueListDto(
     val id: UUID,
     val assetName: String,
@@ -17,6 +19,9 @@ data class AssetValueListDto(
     val cost: BigDecimal,
 )
 
+/**
+ * Dto for card of asset value
+ */
 data class AssetValueUpsertDto(
     val id: UUID?,
     val asset: AutocompleteOption<UUID>,

@@ -29,17 +29,17 @@ class JwtTokenProvider(
     }
 
     fun getUserIdFromJWT(token: String): String {
-        val claims = Jwts.parser()
+        val claims = Jwts.parserBuilder()
             .setSigningKey(jwtSecret.toByteArray())
+            .build()
             .parseClaimsJws(token)
             .body
-
         return claims.subject
     }
 
     fun validateToken(authToken: String): Boolean {
         try {
-            Jwts.parser().setSigningKey(jwtSecret.toByteArray()).parseClaimsJws(authToken)
+            Jwts.parserBuilder().setSigningKey(jwtSecret.toByteArray()).build().parseClaimsJws(authToken)
             return true
         } catch (e: Exception) {
             e.printStackTrace()

@@ -1,5 +1,6 @@
 package com.fincontrol.config.auth
 
+import com.fincontrol.service.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -22,15 +23,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     prePostEnabled = true
 )
 class SecurityConfig(
-    private val userDetailsService: UserDetailsServiceImpl,
+    private val customUserDetailsService: CustomUserDetailsService,
     private val unauthorizedHandler: JwtAuthenticationEntryPoint,
     private val tokenProvider: JwtTokenProvider,
-): WebSecurityConfigurerAdapter() {
+) : WebSecurityConfigurerAdapter() {
     @Bean
-    fun jwtAuthenticationFilter(): JwtAuthenticationFilter = JwtAuthenticationFilter(tokenProvider, userDetailsService)
+    fun jwtAuthenticationFilter() = JwtAuthenticationFilter(tokenProvider, customUserDetailsService)
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
+        auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder())
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
