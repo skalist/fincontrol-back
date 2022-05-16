@@ -27,22 +27,20 @@ class BankAccountService(
         .let { BankAccountUpsertDto(it.id, it.name) }
 
     @Transactional
-    fun create(dto: BankAccountUpsertDto): BankAccountUpsertDto {
+    fun create(dto: BankAccountUpsertDto): UUID {
         val userId = authenticationFacade.getUserId()
         val bankAccount = BankAccount(name = dto.name, userId = userId)
-        return bankAccountRepository.save(bankAccount)
-            .let { BankAccountUpsertDto(it.id, it.name) }
+        return bankAccountRepository.save(bankAccount).id
     }
 
     @Transactional
-    fun update(dto: BankAccountUpsertDto): BankAccountUpsertDto {
+    fun update(dto: BankAccountUpsertDto): UUID {
         val bankAccount = bankAccountRepository.findById(dto.id!!).orElseThrow {
             throw EntityNotFoundException(BankAccount::class.java.simpleName, dto.id)
         }
         val copyBankAccount = bankAccount.copy(name = dto.name)
 
-        return bankAccountRepository.save(copyBankAccount)
-            .let { BankAccountUpsertDto(it.id, it.name) }
+        return bankAccountRepository.save(copyBankAccount).id
     }
 
     @Transactional

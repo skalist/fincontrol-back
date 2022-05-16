@@ -1,10 +1,10 @@
 package com.fincontrol.service
 
 import com.fincontrol.dto.*
-import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
-import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
+import com.fincontrol.filter.ExpenseStatisticByCategoryFilter
 import com.fincontrol.filter.MedianStatisticByCategoryFilter
+import com.fincontrol.filter.MonthlyExpenseStatisticByCategoryFilter
 import com.fincontrol.model.*
 import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.specification.BankOperationSpecification
@@ -27,7 +27,7 @@ class BankOperationStatisticService(
         const val MAX_NUMBER_DISPLAYING_CATEGORIES = 9
     }
 
-    fun getBankOperationStatisticByType(filter: BankOperationStatisticByTypeFilter): BankOperationStatisticByTypeDto {
+    fun getTotalStatisticByType(filter: BankOperationStatisticByTypeFilter): BankOperationStatisticByTypeDto {
         val result = getGroupedBankOperations(filter)
         val labels = getLabelsForAnnualStatistic(
             availaibleMonths = result.map { LocalDate.of(it.year, it.month, 1) },
@@ -61,9 +61,9 @@ class BankOperationStatisticService(
         return entityManager.createQuery(query).resultList
     }
 
-    fun getBankOperationStatisticByCategory(
-        filter: ExpenseValueStatisticByCategoryFilter,
-    ): BankOperationStatisticByCategoryDto {
+    fun getMonthlyExpenseStatisticByCategory(
+        filter: MonthlyExpenseStatisticByCategoryFilter,
+    ): MonthlyExpenseStatisticByCategoryDto {
         val result = getGroupedBankOperationByCategory(filter)
 
         val labels = mutableListOf<String>()
@@ -79,11 +79,11 @@ class BankOperationStatisticService(
             }
         }
 
-        return BankOperationStatisticByCategoryDto(labels, series, other)
+        return MonthlyExpenseStatisticByCategoryDto(labels, series, other)
     }
 
     private fun getGroupedBankOperationByCategory(
-        filter: ExpenseValueStatisticByCategoryFilter
+        filter: MonthlyExpenseStatisticByCategoryFilter
     ): List<BankOperationStatisticByCategory> {
         val userId = authenticationFacade.getUserId()
 
@@ -117,7 +117,7 @@ class BankOperationStatisticService(
         }
     }
 
-    fun getAnnualStatisticByCategory(filter: AnnualStatisticByCategoryFilter): AnnualBankOperationStatisticByCategoryDto {
+    fun getExpenseStatisticByCategory(filter: ExpenseStatisticByCategoryFilter): ExpenseStatisticByCategoryDto {
         val result = getAnnualGroupedBankOperationStatisticByCategory(filter)
         val labels = getLabelsForAnnualStatistic(
             availaibleMonths = result.map { LocalDate.of(it.year, it.month, 1) },
@@ -130,7 +130,7 @@ class BankOperationStatisticService(
             series[index] = row.value
         }
 
-        return AnnualBankOperationStatisticByCategoryDto(labels, series)
+        return ExpenseStatisticByCategoryDto(labels, series)
     }
 
     fun getLabelsForAnnualStatistic(availaibleMonths: List<LocalDate>): List<LocalDate> {
@@ -149,7 +149,7 @@ class BankOperationStatisticService(
     }
 
     private fun getAnnualGroupedBankOperationStatisticByCategory(
-        filter: AnnualStatisticByCategoryFilter
+        filter: ExpenseStatisticByCategoryFilter
     ): List<AnnualBankOperationStatisticByCategory> {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder

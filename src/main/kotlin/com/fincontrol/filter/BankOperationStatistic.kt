@@ -21,7 +21,7 @@ data class BankOperationStatisticByTypeFilter(
     }
 }
 
-data class ExpenseValueStatisticByCategoryFilter(
+data class MonthlyExpenseStatisticByCategoryFilter(
     val month: Int,
     val year: Int,
 ) {
@@ -35,7 +35,7 @@ data class ExpenseValueStatisticByCategoryFilter(
     }
 }
 
-data class AnnualStatisticByCategoryFilter(
+data class ExpenseStatisticByCategoryFilter(
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate?,
     @DateTimeFormat(pattern = "yyyy-MM-dd")

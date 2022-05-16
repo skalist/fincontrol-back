@@ -1,8 +1,8 @@
 package com.fincontrol.service
 
-import com.fincontrol.filter.AnnualStatisticByCategoryFilter
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
-import com.fincontrol.filter.ExpenseValueStatisticByCategoryFilter
+import com.fincontrol.filter.ExpenseStatisticByCategoryFilter
+import com.fincontrol.filter.MonthlyExpenseStatisticByCategoryFilter
 import com.fincontrol.model.AnnualBankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByType
@@ -47,7 +47,7 @@ internal class BankOperationStatisticServiceTest {
         every { entityManager.createQuery(fakeBankOperationByTypeQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()
 
-        val statistic = bankOperationStatisticService.getBankOperationStatisticByType(
+        val statistic = bankOperationStatisticService.getTotalStatisticByType(
             BankOperationStatisticByTypeFilter(any(), any())
         )
 
@@ -71,8 +71,8 @@ internal class BankOperationStatisticServiceTest {
         every { entityManager.createQuery(fakeBankOperationByCategoryQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()
 
-        val statistic = bankOperationStatisticService.getBankOperationStatisticByCategory(
-            ExpenseValueStatisticByCategoryFilter(1, 2000)
+        val statistic = bankOperationStatisticService.getMonthlyExpenseStatisticByCategory(
+            MonthlyExpenseStatisticByCategoryFilter(1, 2000)
         )
 
         assertThat(statistic.labels).isEqualTo(listOf("Category2", "Category3", "Category1"))
@@ -92,8 +92,8 @@ internal class BankOperationStatisticServiceTest {
         every { entityManager.createQuery(fakeBankOperationByCategoryQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()
 
-        val statistic = bankOperationStatisticService.getBankOperationStatisticByCategory(
-            ExpenseValueStatisticByCategoryFilter(1, 2000)
+        val statistic = bankOperationStatisticService.getMonthlyExpenseStatisticByCategory(
+            MonthlyExpenseStatisticByCategoryFilter(1, 2000)
         )
 
         assertThat(statistic.labels.size).isEqualTo(9)
@@ -114,8 +114,8 @@ internal class BankOperationStatisticServiceTest {
         every { entityManager.createQuery(fakeAnnualBankOperationByCategoryQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()
 
-        val statistic = bankOperationStatisticService.getAnnualStatisticByCategory(
-            AnnualStatisticByCategoryFilter(any(), any(), UUID.randomUUID())
+        val statistic = bankOperationStatisticService.getExpenseStatisticByCategory(
+            ExpenseStatisticByCategoryFilter(any(), any(), UUID.randomUUID())
         )
 
         assertThat(statistic.labels.size).isEqualTo(4)

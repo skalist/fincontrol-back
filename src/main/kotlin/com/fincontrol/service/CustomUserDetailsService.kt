@@ -1,5 +1,8 @@
-package com.fincontrol.config.auth
+package com.fincontrol.service
 
+import com.fincontrol.config.auth.UserPrincipal
+import com.fincontrol.dto.UserDto
+import com.fincontrol.exception.EntityNotFoundException
 import com.fincontrol.model.User
 import com.fincontrol.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
@@ -11,8 +14,9 @@ import java.util.*
 
 @Service
 @Transactional(readOnly = true)
-class UserDetailsServiceImpl(
+class CustomUserDetailsService(
     private val userRepository: UserRepository,
+    private val authenticationFacade: AuthenticationFacade,
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository.findByUsernameAndActiveIsTrue(username)
@@ -30,5 +34,12 @@ class UserDetailsServiceImpl(
     @Transactional
     fun save(user: User): User {
         return userRepository.save(user)
+    }
+
+    fun getUser(): UserDto {
+        val userId = authenticationFacade.getUserId()
+        val user = userRepository.findById(userId)
+            .orElseThrow { throw EntityNotFoundException(User::class.java.simpleName, userId) }
+        return user.let { UserDto(it.username, it.firstName, it.lastName) }
     }
 }

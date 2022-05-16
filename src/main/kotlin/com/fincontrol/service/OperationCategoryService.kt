@@ -27,22 +27,20 @@ class OperationCategoryService(
         .let { OperationCategoryUpsertDto(it.id, it.name) }
 
     @Transactional
-    fun create(dto: OperationCategoryUpsertDto): OperationCategoryUpsertDto {
+    fun create(dto: OperationCategoryUpsertDto): UUID {
         val userId = authenticationFacade.getUserId()
         val operationCategory = OperationCategory(name = dto.name, userId = userId)
-        return operationCategoryRepository.save(operationCategory)
-            .let { OperationCategoryUpsertDto(it.id, it.name) }
+        return operationCategoryRepository.save(operationCategory).id
     }
 
     @Transactional
-    fun update(dto: OperationCategoryUpsertDto): OperationCategoryUpsertDto {
+    fun update(dto: OperationCategoryUpsertDto): UUID {
         val operationCategory = operationCategoryRepository.findById(dto.id!!).orElseThrow {
             throw EntityNotFoundException(OperationCategory::class.java.simpleName, dto.id)
         }
         val copyOperationCategory = operationCategory.copy(name = dto.name)
 
-        return operationCategoryRepository.save(copyOperationCategory)
-            .let { OperationCategoryUpsertDto(it.id, it.name) }
+        return operationCategoryRepository.save(copyOperationCategory).id
     }
 
     @Transactional

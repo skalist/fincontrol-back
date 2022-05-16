@@ -11,7 +11,7 @@ data class BankOperationStatisticByTypeDto(
     val series: Map<OperationType, List<BigDecimal>>,
 )
 
-data class BankOperationStatisticByCategoryDto(
+data class MonthlyExpenseStatisticByCategoryDto(
     val labels: List<String>,
     val series: List<BigDecimal>,
     val other: BigDecimal,
@@ -22,7 +22,7 @@ data class LastMonthOfBankOperation(
     val year: Int,
 )
 
-data class AnnualBankOperationStatisticByCategoryDto(
+data class ExpenseStatisticByCategoryDto(
     @JsonFormat(pattern = "yyyy-MM-dd")
     val labels: List<LocalDate>,
     val series: List<BigDecimal>,
