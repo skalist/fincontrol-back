@@ -8,6 +8,6 @@ import java.util.*
  * Repository for user entity
  */
 interface UserRepository: JpaRepository<User, UUID> {
-    fun findByUsernameAndActiveIsTrue(username: String): User?
+    fun findByUsername(username: String): User?
 }
 
