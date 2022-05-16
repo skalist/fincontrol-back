@@ -1,5 +1,8 @@
 package com.fincontrol.model
 
+/**
+ * Asset event enumeration
+ */
 enum class AssetEvent(
     val value: String,
 ) {

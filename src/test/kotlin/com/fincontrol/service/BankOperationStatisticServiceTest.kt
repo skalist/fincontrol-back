@@ -3,9 +3,9 @@ package com.fincontrol.service
 import com.fincontrol.filter.BankOperationStatisticByTypeFilter
 import com.fincontrol.filter.ExpenseStatisticByCategoryFilter
 import com.fincontrol.filter.MonthlyExpenseStatisticByCategoryFilter
-import com.fincontrol.model.AnnualBankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByCategory
 import com.fincontrol.model.BankOperationStatisticByType
+import com.fincontrol.model.MonthlyBankOperationStatisticByCategory
 import com.fincontrol.model.OperationType
 import com.fincontrol.repository.BankOperationRepository
 import io.mockk.every
@@ -27,9 +27,9 @@ internal class BankOperationStatisticServiceTest {
     private val authenticationFacade = mockk<AuthenticationFacade>()
     private val fakeBankOperationByTypeQuery = mockk<CriteriaQuery<BankOperationStatisticByType>>(relaxed = true)
     private val fakeBankOperationByCategoryQuery =
-        mockk<CriteriaQuery<BankOperationStatisticByCategory>>(relaxed = true)
+        mockk<CriteriaQuery<MonthlyBankOperationStatisticByCategory>>(relaxed = true)
     private val fakeAnnualBankOperationByCategoryQuery =
-        mockk<CriteriaQuery<AnnualBankOperationStatisticByCategory>>(relaxed = true)
+        mockk<CriteriaQuery<BankOperationStatisticByCategory>>(relaxed = true)
 
     private val bankOperationStatisticService =
         BankOperationStatisticService(entityManager, authenticationFacade, bankOperationRepository)
@@ -61,12 +61,12 @@ internal class BankOperationStatisticServiceTest {
     @Test
     fun `should return correct statistic by category`() {
         val values = listOf(
-            BankOperationStatisticByCategory("Category1", BigDecimal(10)),
-            BankOperationStatisticByCategory("Category2", BigDecimal(30)),
-            BankOperationStatisticByCategory("Category3", BigDecimal(20)),
+            MonthlyBankOperationStatisticByCategory("Category1", BigDecimal(10)),
+            MonthlyBankOperationStatisticByCategory("Category2", BigDecimal(30)),
+            MonthlyBankOperationStatisticByCategory("Category3", BigDecimal(20)),
         )
         every {
-            entityManager.criteriaBuilder.createQuery(BankOperationStatisticByCategory::class.java)
+            entityManager.criteriaBuilder.createQuery(MonthlyBankOperationStatisticByCategory::class.java)
         } returns fakeBankOperationByCategoryQuery
         every { entityManager.createQuery(fakeBankOperationByCategoryQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()
@@ -82,12 +82,12 @@ internal class BankOperationStatisticServiceTest {
 
     @Test
     fun `should return correct other field for statistic by category`() {
-        val values = mutableListOf<BankOperationStatisticByCategory>()
+        val values = mutableListOf<MonthlyBankOperationStatisticByCategory>()
         repeat(20) {
-            values += BankOperationStatisticByCategory("Category${it}", BigDecimal(it * 10))
+            values += MonthlyBankOperationStatisticByCategory("Category${it}", BigDecimal(it * 10))
         }
         every {
-            entityManager.criteriaBuilder.createQuery(BankOperationStatisticByCategory::class.java)
+            entityManager.criteriaBuilder.createQuery(MonthlyBankOperationStatisticByCategory::class.java)
         } returns fakeBankOperationByCategoryQuery
         every { entityManager.createQuery(fakeBankOperationByCategoryQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()
@@ -104,12 +104,12 @@ internal class BankOperationStatisticServiceTest {
     @Test
     fun `should return correct annual statistic by category`() {
         val values = listOf(
-            AnnualBankOperationStatisticByCategory(1, 2000, BigDecimal(100)),
-            AnnualBankOperationStatisticByCategory(3, 2000, BigDecimal(150)),
-            AnnualBankOperationStatisticByCategory(4, 2000, BigDecimal(300)),
+            BankOperationStatisticByCategory(1, 2000, BigDecimal(100)),
+            BankOperationStatisticByCategory(3, 2000, BigDecimal(150)),
+            BankOperationStatisticByCategory(4, 2000, BigDecimal(300)),
         )
         every {
-            entityManager.criteriaBuilder.createQuery(AnnualBankOperationStatisticByCategory::class.java)
+            entityManager.criteriaBuilder.createQuery(BankOperationStatisticByCategory::class.java)
         } returns fakeAnnualBankOperationByCategoryQuery
         every { entityManager.createQuery(fakeAnnualBankOperationByCategoryQuery).resultList } returns values
         every { authenticationFacade.getUserId() } returns UUID.randomUUID()

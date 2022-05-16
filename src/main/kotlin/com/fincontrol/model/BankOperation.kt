@@ -6,6 +6,9 @@ import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
 
+/**
+ * Model for bank operation entity
+ */
 @Entity
 data class BankOperation(
     @Id

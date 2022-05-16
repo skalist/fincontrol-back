@@ -6,6 +6,9 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
+/**
+ * Model for operation category entity
+ */
 @Entity
 data class OperationCategory(
     @Id

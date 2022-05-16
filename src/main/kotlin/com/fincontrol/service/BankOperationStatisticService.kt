@@ -84,11 +84,11 @@ class BankOperationStatisticService(
 
     private fun getGroupedBankOperationByCategory(
         filter: MonthlyExpenseStatisticByCategoryFilter
-    ): List<BankOperationStatisticByCategory> {
+    ): List<MonthlyBankOperationStatisticByCategory> {
         val userId = authenticationFacade.getUserId()
 
         val builder = entityManager.criteriaBuilder
-        val query = builder.createQuery(BankOperationStatisticByCategory::class.java)
+        val query = builder.createQuery(MonthlyBankOperationStatisticByCategory::class.java)
         val root = query.from(BankOperation::class.java)
         query.multiselect(
             root[BankOperation_.operationCategory][OperationCategory_.name],
@@ -150,10 +150,10 @@ class BankOperationStatisticService(
 
     private fun getAnnualGroupedBankOperationStatisticByCategory(
         filter: ExpenseStatisticByCategoryFilter
-    ): List<AnnualBankOperationStatisticByCategory> {
+    ): List<BankOperationStatisticByCategory> {
         val userId = authenticationFacade.getUserId()
         val builder = entityManager.criteriaBuilder
-        val query = builder.createQuery(AnnualBankOperationStatisticByCategory::class.java)
+        val query = builder.createQuery(BankOperationStatisticByCategory::class.java)
         val root = query.from(BankOperation::class.java)
         val monthOfYear = builder.function("month", Int::class.java, root[BankOperation_.dateCreated])
         val year = builder.function("year", Int::class.java, root[BankOperation_.dateCreated])

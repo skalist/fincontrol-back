@@ -47,7 +47,7 @@ class BankOperationStatisticController(
      * @param filter filter value
      * @return data statistic for apexChart
      */
-    @GetMapping("annual-statistic-by-category")
+    @GetMapping("expense-statistic-by-category")
     fun getExpenseStatisticByCategory(filter: ExpenseStatisticByCategoryFilter) =
         bankOperationStatisticService.getExpenseStatisticByCategory(filter)
 

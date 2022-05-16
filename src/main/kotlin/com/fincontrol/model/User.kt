@@ -1,12 +1,15 @@
 package com.fincontrol.model
 
 import org.hibernate.annotations.Type
-import java.util.UUID
+import java.util.*
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.Table
 
+/**
+ * Model for user entity
+ */
 @Entity
 @Table(name = "users")
 data class User(
