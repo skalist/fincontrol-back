@@ -258,13 +258,15 @@ class BankOperationStatisticService(
         val userId = authenticationFacade.getUserId()
         val bankOperations = bankOperationRepository.findAll(filter.getSpecification(userId))
         val bankOperationMap = bankOperations.groupBy { it.dateCreated.withDayOfMonth(1) }
-        return bankOperationMap.entries.map { (month, values) ->
-            val costValues = values.map { it.cost }.sorted()
-            val averageValue = costValues.sumOf { it }.div(BigDecimal(costValues.size))
-            MedianBankOperationStatisticByCategoryDto(
-                month,
+        return getChainOfMonthsWithoutSkippingEmpty(bankOperationMap.keys.toList()).map { date ->
+            val costValues = bankOperationMap[date]?.map { it.cost }?.sorted() ?: listOf()
+            val series = if (costValues.isEmpty()) {
+                listOf(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
+            } else {
+                val averageValue = costValues.sumOf { it }.div(BigDecimal(costValues.size))
                 listOf(costValues.minOf { it }, averageValue, costValues.maxOf { it })
-            )
+            }
+            MedianBankOperationStatisticByCategoryDto(date, series)
         }
     }
 }
