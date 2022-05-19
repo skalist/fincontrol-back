@@ -1,9 +1,6 @@
 package com.fincontrol
 
-import com.fincontrol.controller.BankAccountController
-import com.fincontrol.controller.BankOperationController
-import com.fincontrol.controller.BankOperationStatisticController
-import com.fincontrol.controller.OperationCategoryController
+import com.fincontrol.controller.*
 import com.fincontrol.repository.BankAccountRepository
 import com.fincontrol.repository.BankOperationRepository
 import com.fincontrol.repository.OperationCategoryRepository
@@ -42,6 +39,8 @@ class ApplicationIT {
     protected lateinit var operationCategoryRepository: OperationCategoryRepository
     @Autowired
     protected lateinit var bankOperationRepository: BankOperationRepository
+    @Autowired
+    protected lateinit var investmentCalculatorController: InvestmentCalculatorController
 
     companion object {
         @Container
