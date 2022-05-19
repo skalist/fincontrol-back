@@ -53,7 +53,7 @@ class SecurityConfig(
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers("/auth/**")
+            .antMatchers("/auth/login", "/auth/signup")
             .permitAll()
             .anyRequest()
             .authenticated()
