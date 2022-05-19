@@ -1,5 +1,6 @@
 package com.fincontrol.config.auth
 
+import com.fincontrol.service.CustomUserDetailsService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -8,10 +9,9 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
 class JwtAuthenticationFilter(
     private val tokenProvider: JwtTokenProvider,
-    private val userDetailsService: UserDetailsServiceImpl,
+    private val customUserDetailsService: CustomUserDetailsService,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -22,7 +22,7 @@ class JwtAuthenticationFilter(
             val jwt = getJwtFromRequest(request)
             if (jwt != null && tokenProvider.validateToken(jwt)) {
                 val userId = tokenProvider.getUserIdFromJWT(jwt)
-                val user = userDetailsService.loadUserById(userId)
+                val user = customUserDetailsService.loadUserById(userId)
                 val authentication = UsernamePasswordAuthenticationToken(user, null, user.authorities)
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authentication
@@ -33,7 +33,7 @@ class JwtAuthenticationFilter(
         filterChain.doFilter(request, response)
     }
 
-    fun getJwtFromRequest(request: HttpServletRequest): String? {
+    private fun getJwtFromRequest(request: HttpServletRequest): String? {
         val authorization = request.getHeader("Authorization")
         if (authorization.startsWith("Bearer ")) {
             return authorization.substring(7, authorization.length)

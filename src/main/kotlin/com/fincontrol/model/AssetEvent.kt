@@ -1,7 +1,14 @@
 package com.fincontrol.model
 
-enum class AssetEvent {
-    BUYING,
-    SALE,
-    PRICE_FIXING,
+/**
+ * Asset event enumeration
+ */
+enum class AssetEvent(
+    val value: String,
+) {
+    BUYING("Покупка"),
+    SALE("Продажа"),
+    PRICE_FIXING("Фиксирование стоимости"),
+    DIVIDENDS("Дивиденды"),
+    COUPONS("Купоны"),
 }

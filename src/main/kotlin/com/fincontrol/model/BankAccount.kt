@@ -6,6 +6,9 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
+/**
+ * Model for bank account entity
+ */
 @Entity
 data class BankAccount(
     @Id

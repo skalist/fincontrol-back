@@ -1,8 +1,13 @@
 package com.fincontrol.model
 
-enum class Currency {
-    EURO,
-    DOLLAR,
-    RUBLE,
+/**
+ * Currency enumeration for investment
+ */
+enum class Currency(
+    val value: String,
+) {
+    EURO("Евро"),
+    DOLLAR("Доллар"),
+    RUBLE("Рубль"),
 }
 
