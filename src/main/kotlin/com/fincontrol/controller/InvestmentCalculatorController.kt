@@ -1,33 +1,26 @@
 package com.fincontrol.controller
 
 import com.fincontrol.dto.InvestmentCalculatorRequest
-import com.fincontrol.dto.InvestmentCalculatorResponse
+import com.fincontrol.service.InvestmentCalculatorService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.math.BigDecimal
-import java.math.RoundingMode
 
+/**
+ * Controller for working with investment calculator
+ */
 @RestController
 @RequestMapping("investment-calculator")
-class InvestmentCalculatorController {
-    @PostMapping
-    fun calculate(@RequestBody investmentRequest: InvestmentCalculatorRequest): InvestmentCalculatorResponse {
-        val timeLeft = investmentRequest.retiredAge - investmentRequest.startAge
-
-        val investmentReturnShare = investmentRequest.investmentReturnPercent.divide(BigDecimal(100)) + BigDecimal.ONE
-        val totalInvestmentReturn = (1..timeLeft).map { investmentReturnShare.pow(it) }.sumOf { it }
-
-        val inflationShare = investmentRequest.inflationPercent.divide(BigDecimal(100)) + BigDecimal.ONE
-        val totalInflation = inflationShare.pow(timeLeft)
-
-        val retiredSalaryPerMonth = totalInflation.multiply(investmentRequest.expectedSalaryNowPerMonth)
-
-        val investmentPerMonth =
-            retiredSalaryPerMonth.divide(totalInvestmentReturn.multiply(investmentReturnShare - inflationShare), 2, RoundingMode.HALF_EVEN)
-
-        val accumulatedInvestments = investmentPerMonth.multiply(totalInvestmentReturn).multiply(BigDecimal(12))
-        return InvestmentCalculatorResponse(retiredSalaryPerMonth, accumulatedInvestments, investmentPerMonth)
-    }
+class InvestmentCalculatorController(
+    private val investmentCalculatorService: InvestmentCalculatorService,
+) {
+    /**
+     * Method for getting info how much do we need invest for getting good live in retired age
+     * @param investmentRequest info about inflation rate, investment return rate and desire salary
+     * @return info about investing
+     */
+    @PostMapping("calculate")
+    fun calculate(@RequestBody investmentRequest: InvestmentCalculatorRequest) =
+        investmentCalculatorService.calculate(investmentRequest)
 }
