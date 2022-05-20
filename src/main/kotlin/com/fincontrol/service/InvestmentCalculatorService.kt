@@ -42,6 +42,7 @@ class InvestmentCalculatorService {
             retiredSalaryPerMonth = retiredSalaryPerMonth.setScale(2, RoundingMode.HALF_EVEN),
             accumulatedInvestments = accumulatedInvestments.setScale(2, RoundingMode.HALF_EVEN),
             investmentPerMonth = investmentPerMonth,
+            totalYears = timeLeft,
         )
     }
 }

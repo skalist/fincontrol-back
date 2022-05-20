@@ -44,4 +44,8 @@ data class InvestmentCalculatorResponse(
      * Investment amount which you need insert into account per month
      */
     val investmentPerMonth: BigDecimal,
+    /**
+     * Count of years when you can invest
+     */
+    val totalYears: Int,
 )
