@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class InvestmentCalculatorControllerTest: ApplicationIT() {
+class InvestmentCalculatorControllerTest : ApplicationIT() {
     @Test
     fun `should calculate investment amount`() {
         val request =
@@ -20,8 +20,12 @@ class InvestmentCalculatorControllerTest: ApplicationIT() {
             )
 
         val response = investmentCalculatorController.calculate(request)
-        assertThat(response.investmentPerMonth.setScale(0, RoundingMode.HALF_EVEN)).isEqualTo(BigDecimal(304_716))
-        assertThat(response.retiredSalaryPerMonth.setScale(0, RoundingMode.HALF_EVEN)).isEqualTo(BigDecimal(133_100))
-        assertThat(response.accumulatedInvestments.setScale(0, RoundingMode.HALF_EVEN)).isEqualTo(BigDecimal(15_972_000))
+        assertThat(response.investmentPerMonth.setScale(0, RoundingMode.HALF_EVEN))
+            .isEqualTo(BigDecimal(304_716))
+        assertThat(response.retiredSalaryPerMonth.setScale(0, RoundingMode.HALF_EVEN))
+            .isEqualTo(BigDecimal(133_100))
+        assertThat(response.accumulatedInvestments.setScale(0, RoundingMode.HALF_EVEN))
+            .isEqualTo(BigDecimal(15_972_000))
+        assertThat(response.totalYears).isEqualTo(3)
     }
 }
