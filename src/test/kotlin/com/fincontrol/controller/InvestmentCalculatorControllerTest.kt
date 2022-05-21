@@ -1,7 +1,7 @@
 package com.fincontrol.controller
 
 import com.fincontrol.ApplicationIT
-import com.fincontrol.dto.InvestmentCalculatorRequest
+import com.fincontrol.dto.InvestmentCalculatorDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -11,7 +11,7 @@ class InvestmentCalculatorControllerTest : ApplicationIT() {
     @Test
     fun `should calculate investment amount`() {
         val request =
-            InvestmentCalculatorRequest(
+            InvestmentCalculatorDto(
                 startAge = 1,
                 retiredAge = 4,
                 investmentReturnPercent = BigDecimal(20),
