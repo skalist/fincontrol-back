@@ -14,9 +14,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 
-@Testcontainers
 @RunWith(SpringRunner::class)
 @SpringBootTest(
     classes = [FincontrolBackApplication::class],
@@ -48,6 +46,7 @@ class ApplicationIT {
             withDatabaseName("test_db")
             withUsername("test_user")
             withPassword("test_password")
+            start()
         }
 
         @JvmStatic
