@@ -17,11 +17,12 @@ class InvestmentCalculatorControllerTest : ApplicationIT() {
                 investmentReturnPercent = BigDecimal(20),
                 inflationPercent = BigDecimal(10),
                 expectedSalaryNowPerMonth = BigDecimal(100_000),
+                currentAccountsCost = BigDecimal(100_000)
             )
 
         val response = investmentCalculatorController.calculate(request)
         assertThat(response.investmentPerMonth.setScale(0, RoundingMode.HALF_EVEN))
-            .isEqualTo(BigDecimal(304_716))
+            .isEqualTo(BigDecimal(301_419))
         assertThat(response.retiredSalaryPerMonth.setScale(0, RoundingMode.HALF_EVEN))
             .isEqualTo(BigDecimal(133_100))
         assertThat(response.accumulatedInvestments.setScale(0, RoundingMode.HALF_EVEN))

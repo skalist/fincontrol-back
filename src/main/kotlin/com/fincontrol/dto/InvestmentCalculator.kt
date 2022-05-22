@@ -26,6 +26,10 @@ data class InvestmentCalculatorDto(
      * Comfortable salary now per month
      */
     val expectedSalaryNowPerMonth: BigDecimal,
+    /**
+     * Current cost of all broker accounts
+     */
+    val currentAccountsCost: BigDecimal,
 )
 
 /**
