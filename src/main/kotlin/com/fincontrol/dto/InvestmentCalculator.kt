@@ -5,7 +5,7 @@ import java.math.BigDecimal
 /**
  * Request dto for getting investment info
  */
-data class InvestmentCalculatorRequest(
+data class InvestmentCalculatorDto(
     /**
      * Age when you are going to start invest
      */
@@ -26,12 +26,16 @@ data class InvestmentCalculatorRequest(
      * Comfortable salary now per month
      */
     val expectedSalaryNowPerMonth: BigDecimal,
+    /**
+     * Current cost of all broker accounts
+     */
+    val currentAccountsCost: BigDecimal,
 )
 
 /**
  * Response dto for getting investment info
  */
-data class InvestmentCalculatorResponse(
+data class InvestmentCalculatorResultDto(
     /**
      * Desired salary in retired age
      */
