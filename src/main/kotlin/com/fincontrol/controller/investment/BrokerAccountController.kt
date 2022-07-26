@@ -1,9 +1,10 @@
-package com.fincontrol.controller
+package com.fincontrol.controller.investment
 
 import com.fincontrol.dto.AutocompleteOption
+import com.fincontrol.dto.BrokerAccountByTokenDto
 import com.fincontrol.dto.BrokerAccountListDto
 import com.fincontrol.dto.BrokerAccountUpsertDto
-import com.fincontrol.service.BrokerAccountService
+import com.fincontrol.service.investment.BrokerAccountService
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -60,4 +61,14 @@ class BrokerAccountController(
      */
     @GetMapping("selects")
     fun findSelects(): List<AutocompleteOption<UUID>> = brokerAccountService.findSelects()
+
+    /**
+     * Getting accounts by token
+     * @param token provided token
+     * @return list of available accounts
+     */
+    @GetMapping("by-token")
+    suspend fun getAccountsByToken(@RequestParam token: String): List<BrokerAccountByTokenDto> {
+        return brokerAccountService.getAccountsByToken(token)
+    }
 }

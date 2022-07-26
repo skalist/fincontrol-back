@@ -1,5 +1,6 @@
 package com.fincontrol.dto
 
+import com.fincontrol.model.BrokerAccountType
 import java.util.*
 
 /**
@@ -16,4 +17,13 @@ data class BrokerAccountListDto(
 data class BrokerAccountUpsertDto(
     val id: UUID?,
     val name: String,
+)
+
+/**
+ * Dto for getting accounts by token
+ */
+data class BrokerAccountByTokenDto(
+    val externalId: String,
+    val name: String,
+    val type: BrokerAccountType,
 )
