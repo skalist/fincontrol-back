@@ -19,3 +19,11 @@ data class BrokerAccount(
     val userId: UUID,
     val name: String,
 )
+
+/**
+ * Types of broker account
+ */
+enum class BrokerAccountType {
+    STANDARD,
+    IIS,
+}
